@@ -1,0 +1,14 @@
+AddType application/x-httpd-php .htm
+AddType application/x-httpd-php .html
+Options All -Indexes
+
+RewriteEngine On
+
+RewriteCond %{THE_REQUEST} /([^.]+)\.php [NC]
+RewriteRule ^ /%1 [NC,L,R]
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^ %{REQUEST_URI}.php [NC,L]
+
+#Rule to view post in good way
+RewriteRule ^read/([a-zA-Z0-9_-]+)$ read_post?article_id=$1
+RewriteRule ^page/([a-zA-Z0-9_-]+)$ page_view?cmenu_url=$1
