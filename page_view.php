@@ -23,7 +23,7 @@ include('configs/site_header_bk.php');
                     <div class="col-md-12">
                         <div class="about-text">
                             <h3><?php echo $result['cmenu_header']; ?></h3>
-                            <p><?php echo $result['page_content']; ?></p>
+                            <p><?php echo stripcslashes($result['page_content']); ?></p>
                         </div>
                     </div>
                 </div><hr class="hr-small">
@@ -36,7 +36,7 @@ include('configs/site_header_bk.php');
                     <div class="col-md-6">
                         <div class="about-text">
                             <h3><?php echo $result['cmenu_header']; ?></h3>
-                            <p><?php echo $result['page_content']; ?></p>
+                            <p><?php echo stripcslashes($result['page_content']); ?></p>
                         </div>
                     </div>
                 </div>

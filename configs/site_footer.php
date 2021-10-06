@@ -87,6 +87,6 @@
     <script src="js/jquery.magnific-popup.min.js"></script>
     <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/owl-carousel/owl.carousel.js"></script>
+    <script src="others/carousel/custom-slides.js"></script>
 </body>
 </html>

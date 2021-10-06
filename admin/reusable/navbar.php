@@ -76,9 +76,10 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
     -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo mr-5" href="#"><img src="../images/logo.svg" class="mr-2" alt="logo"/></a>
-        <a class="navbar-brand brand-logo-mini" href="#"><img src="../images/logo-mini.svg" alt="logo"/></a>
+      <a href="../" target="_blank"><img src="../images/profile/logo.png" style="width: 100%; height: auto; padding: 8px;"></a>
+        
       </div>
+
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
           <span class="ti-view-list"></span>
@@ -140,6 +141,15 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
           </li>
           <?php } ?>
           
+          <?php if($_SESSION['admin_role']=='Author') { ?>
+          <li class="nav-item">
+            <a class="nav-link" href="../admin/articles?create">
+              <i class="ti-pencil-alt menu-icon"></i>
+              <span class="menu-title" title="Manage posts(articles)">Create News</span>
+            </a>
+          </li>
+          <?php } ?>
+
           <li class="nav-item">
             <a class="nav-link" href="../admin/articles?view">
               <i class="ti-world menu-icon"></i>
@@ -161,7 +171,7 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
               <span class="menu-title">Social media</span>
             </a>
           </li>
-          <?php } ?>
+          
 
           <li class="nav-item">
             <a class="nav-link" href="../admin/settings?setup">
@@ -170,7 +180,6 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
             </a>
           </li>
 
-          <?php if($_SESSION['admin_role']=='Admin') { ?>
           <li class="nav-item">
             <a class="nav-link" href="../admin/setup?allslides">
               <i class="ti-book menu-icon"></i>

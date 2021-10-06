@@ -1,28 +1,5 @@
 <?php include('configs/site_header.php'); ?>
         
-        <section id="banner">
-
-            <!-- Slider -->
-            <div id="main-slider" class="flexslider">
-                <ul class="slides">
-
-                    <?php
-                    $stmt= $object->viewAllSlides();
-                    while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
-                    ?>
-                    <li>
-                        <img src="uploads/slides/<?php echo $row['slide_image']; ?>" alt="<?php echo $row['slide_title']; ?>" style="width: auto!important; max-width: 60%!important; height: auto!important; max-height: 250px!important;"/>
-                        <div class="flex-caption">
-                            <h3><?php echo $row['slide_title']; ?> </h3>
-                            <p><?php echo $row['description']; ?></p>
-                        </div>
-                    </li>
-                    <?php } ?>
-                </ul>
-            </div>
-            <!-- end slider -->
-
-        </section>
         <section id="call-to-action-2">
             <div class="container">
                 <div class="row">
@@ -37,7 +14,32 @@
             </div>
         </section>
 
-            <section id="content">
+        <?php
+        $stmt= $object->viewAllSlides();
+        while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
+        ?>
+        
+        <div class="slide-container">
+            <!-- Full-width images with caption text -->
+            <div class="image-sliderfade sfade">
+                <img src="uploads/slides/<?php echo $row['slide_image']; ?>" alt="<?php echo $row['slide_title']; ?>" class="slide-img">
+                <div class="slide-text">
+                    <h3><?php echo $row['slide_title']; ?></h3>
+                <p><?php echo $row['description']; ?></p>
+                </div>
+                
+            </div>
+        </div><br>
+    <?php } ?>
+        <!-- The dots/circles -->
+        <div style="text-align:center">
+            <span class="sdot"></span>
+            <span class="sdot"></span>
+            <span class="sdot"></span>
+        </div><br>
+
+
+        <section id="content">
         <div class="container content">     
 
         <!-- End Info Bocks -->

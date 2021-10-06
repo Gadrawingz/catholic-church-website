@@ -76,6 +76,7 @@
     <!-- javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+
     <script src="../js/jquery.js"></script>
     <script src="../js/jquery.easing.1.3.js"></script>
     <script src="../js/bootstrap.min.js"></script>
@@ -90,5 +91,6 @@
     <script src="../js/animate.js"></script>
     <script src="../js/custom.js"></script>
     <script src="../js/owl-carousel/owl.carousel.js"></script>
+    <script src="../others/carousel/custom-slides.js"></script>
 </body>
 </html>

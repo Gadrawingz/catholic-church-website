@@ -52,6 +52,7 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
     <link href="../css/gallery-1.css" rel="stylesheet">
     <link href="../css/style.css" rel="stylesheet" />
     <link href="../css/defined.css" rel="stylesheet" />
+    <link href="../others/carousel/custom-slides.css" rel="stylesheet" />
 
 </head>
 <body style="overflow-x: hidden!important;">
@@ -78,7 +79,7 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#"><?php echo $aboutrow['site_name']; ?></a>
+                        <a class="navbar-brand" href="../" style="color: #d5f5e3!important;"><?php echo $aboutrow['site_name']; ?></a>
                     </div>
                     <div class="navbar-collapse collapse ">
                         <ul class="nav navbar-nav">

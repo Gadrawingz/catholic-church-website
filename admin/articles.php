@@ -46,15 +46,18 @@
                   </a>
                   <p class="card-description">
                     By <?php echo $row['firstname']." ".$row['lastname']; ?> 
-                    <code>
+                    •<mark class="text-primary" >
                       <?php if($post_views=='0') echo "No view"; ?>
                       <?php if($post_views=='1') echo $post_views." view"; ?>
                       <?php if($post_views>1) echo "<strong>".$post_views."</strong> views"; ?>
-                    </code>
+                    </mark>&nbsp;•&nbsp;
+                    <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-success text-right" style="padding: 2.5px 5px!important;">Preview</a>
                   </p>
                   <p>
-                    <u>Published on <?php echo $row['article_date']; ?></u>&nbsp;&nbsp;
-                    <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-success text-right">Update</a>
+                    <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
+                  </p>
+                  <p>
+                    <hr><small>Published on <strong><?php echo $row['article_date']; ?></strong></small>
                   </p>
                 </div>
               </div>

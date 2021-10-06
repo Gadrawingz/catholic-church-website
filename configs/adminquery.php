@@ -396,7 +396,7 @@ class AdminQuery extends DbConnection {
     }
 
     public function viewAllSlides() {
-        $stmt=$this->con->prepare("SELECT * FROM slide ORDER BY slide_id DESC LIMIT 2");
+        $stmt=$this->con->prepare("SELECT * FROM slide ORDER BY slide_id DESC LIMIT 4");
         $stmt->execute();
         return $stmt;
     }
