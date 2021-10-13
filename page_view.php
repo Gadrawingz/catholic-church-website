@@ -10,7 +10,14 @@ include('configs/site_header_bk.php');
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                <h2 class="pageTitle"><?php echo $result['cmenu_name']; ?></h2>
+                <h2 class="pageTitle">
+                    <?php
+                    if($menu_slug=='news' || $menu_slug=='stories' || $menu_slug=='projects' || $menu_slug=='others') {
+                        echo "Posts | ";
+                    }
+                    ?>
+                    <?php echo $result['cmenu_name']; ?>
+                </h2>
             </div>
         </div>
     </section>
@@ -18,7 +25,12 @@ include('configs/site_header_bk.php');
     <section id="content">
         <section class="section-padding">
             <div class="container">
-                <?php if($result['page_picture']==null) { ?>
+
+                <?php 
+                // No show this if its not tabbed
+                if($result['page_type']!='Tabbed' && ($menu_slug!='news' && $menu_slug!='stories' && $menu_slug!='projects' && $menu_slug!='others')) {
+                    if($result['page_picture']==null) { 
+                ?>
                 <div class="row showcase-section">
                     <div class="col-md-12">
                         <div class="about-text">
@@ -40,7 +52,32 @@ include('configs/site_header_bk.php');
                         </div>
                     </div>
                 </div>
-            <?php } ?>
+            <?php }} ?>
+
+
+
+            <?php if($menu_slug=='news' || $menu_slug=='stories' || $menu_slug=='projects' || $menu_slug=='others'){ ?>
+                <!-- End Info Bocks -->
+                <div class="row service-v1 margin-bottom-40">
+                    <?php
+                    $stmt2= $object->readArticleByCategory($menu_slug);
+                    while($rowp= $stmt2->FETCH(PDO::FETCH_ASSOC)) { 
+                    ?>
+                    <div class="col-md-4 col-sm-6 col-xs-12 gallery-item-wrapper photography artwork">
+                        <div class="gallery-item">
+                            <div class="gallery-thumb summary-image">
+                                <img src="../uploads/posts/<?php echo $rowp['article_image'];?>" class="img-responsive" alt="<?php echo $rowp['article_title'];?>">
+                                <div class="image-overlay"></div>
+                                <a href="../uploads/posts/<?php echo $rowp['article_image'];?>" class="gallery-zoom"><i class="fa fa-eye"></i></a>
+                                <a href="read/<?php echo $rowp['article_id'];?>" class="gallery-link"><i class="fa fa-link"></i></a>
+                            </div>
+                            <div>
+                                <h3><a href="../read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></h3>
+                                <p><?php echo $object->showShortArticle(strip_tags($rowp['article_post']));?></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php }} ?>
             
 
             <?php if($menu_slug=='contact') { ?>
@@ -87,7 +124,7 @@ include('configs/site_header_bk.php');
                 <button type="submit" class="btn btn-primary pull-right" name="sendmessage">Send</button><br/>
             </form>
             </div>
-            <?php } else if($menu_slug=='community') { ?>     
+            <?php } else if($menu_slug=='communities') { ?>     
             <div class="container">
                 <div class="about">
                     <div class="block-heading-six">
@@ -114,8 +151,30 @@ include('configs/site_header_bk.php');
                     </div>
                 </div>
             </div>
+            <?php } else if($result['page_type']=='Tabbed') {
+                $stmt46=$object->getTabbedContents($menu_slug);
+                $histnum = 1;
+                while($histpage= $stmt46->FETCH(PDO::FETCH_ASSOC)) {
+            ?>
+            <button class="tablink" onclick="openPage('<?php echo $histpage['tab_id']; ?>', this, 'white')" <?php if($histnum==1) { echo 'id="defaultOpen"'; } ?> >
+                <?php echo $histpage['tab_title']; ?>
+            </button>
             <?php } ?>
-            </div><br><br>
+
+
+            <?php
+                $stmt47=$object->getTabbedContents($menu_slug);
+                while($histpage2= $stmt47->FETCH(PDO::FETCH_ASSOC)) {
+                    error_reporting(E_ERROR | E_PARSE);
+                    header("Content-type: multipart/form-data");
+            ?>
+            <div id="<?php echo $histpage2['tab_id']; ?>" class="tabcontent">
+                <h3><?php echo $histpage2['tab_title']; ?></h3>
+                <p><?php echo ($histpage2['tab_content']); ?></p>
+            </div>
+            <?php } ?>
+
+            <?php } ?></div><br><br>
 
 
             <?php } else { ?>

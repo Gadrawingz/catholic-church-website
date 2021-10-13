@@ -121,7 +121,14 @@ class AdminQuery extends DbConnection {
     }
 
     public function readArticlesByPublisher($id) {
-        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE publisher_id='$id' ");
+        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE publisher_id='$id' ORDER BY article_id DESC LIMIT 25 ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+
+    public function readArticlesAll() {
+        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id ORDER BY article_id DESC LIMIT 35 ");
         $stmt->execute();
         return $stmt;
     }
@@ -131,6 +138,13 @@ class AdminQuery extends DbConnection {
         $stmt->execute();
         return $stmt;
     }
+
+    public function readArticleByCategory($category) {
+        $stmt=$this->con->prepare("SELECT * FROM `article`art LEFT JOIN admin adm ON adm.admin_id = art.publisher_id WHERE article_category='$category' ");
+        $stmt->execute();
+        return $stmt;
+    }
+
 
     public function readOneArticle($article_id, $admin_id) {
         $stmt=$this->con->prepare("SELECT * FROM `article`art LEFT JOIN admin adm ON adm.admin_id = art.publisher_id WHERE publisher_id='$admin_id' AND article_id ='$article_id' ");
@@ -407,14 +421,78 @@ class AdminQuery extends DbConnection {
         return $stmt;
     }
 
-    public function regSubShit($id, $title, $header, $picture, $content) {
+    public function regSubContentMenu($id, $sm, $title, $header, $format) {
+        $stmt=$this->con->prepare("SELECT COUNT(*) FROM menu_sub_sub WHERE cmenu_name='$title' ");
+        $stmt->execute(); 
+        if($stmt->fetchColumn()==0) {
+
+            function urlMaker($string) {
+                $makeAshit= strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $string));
+                $regex= "/[.*?!@#$&-_ ]+$/";
+                return preg_replace($regex, "", $makeAshit); 
+            }
+
+            $sql= "INSERT INTO `menu_sub_sub`(`menu_id`, `sub_menu_id`, `cmenu_name`, `cmenu_url`, `page_type`, `cmenu_header`) VALUES ('$id', '$sm', '$title', '".urlMaker($title)."', '$format', '".addslashes($header)."')";
+            $query= $this->con->prepare($sql);
+            $query->execute();
+            $count= $query->rowCount();
+            return $count;
+        }
+    }
+
+    public function addNewTab($id, $title, $content) {
+        
+        $stmt=$this->con->prepare("SELECT COUNT(*) FROM menu_tabs WHERE tab_content='$content' ");
+        $stmt->execute(); 
+        if($stmt->fetchColumn()==0) {
+            $sql= "INSERT INTO `menu_tabs`(`page_id`, `tab_title`, `tab_content`) VALUES ('$id', '".addslashes($title)."', '".addslashes($content)."')";
+            $query= $this->con->prepare($sql);
+            $query->execute();
+            $count= $query->rowCount();
+            return $count;
+        }
+    }
+
+    public function getTabsDataPerPage($page) {
+        $stmt=$this->con->prepare("SELECT * FROM `menu_tabs` WHERE page_id='$page' ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function getTabbedContents($url) {
+        $stmt=$this->con->prepare("SELECT * FROM `menu_tabs` LEFT JOIN menu_sub_sub ON menu_sub_sub.cmenu_id= menu_tabs.page_id WHERE cmenu_url='$url' ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+
+    public function removeSpecificPage($id) {
+      $sql= "DELETE FROM menu_sub_sub WHERE cmenu_id='$id' ";
+      $stmt=$this->con->prepare($sql);
+      $stmt->execute();
+      $count= $stmt->rowCount();
+      return $count; 
+    }
+
+    public function check4TabbedContent($id) {
+        $sql = "SELECT COUNT(*) FROM `menu_tabs` WHERE page_id='$id'";
+        $count = $this->con->query($sql)->fetchColumn();
+        return $count;
+    }
+
+
+    public function regSubContentMenuD($id, $sm, $title, $header, $picture, $content) {
         $stmt=$this->con->prepare("SELECT COUNT(*) FROM menu_sub WHERE cmenu_name='$title' ");
         $stmt->execute(); 
         if($stmt->fetchColumn()==0) {
 
             $name = $picture['name'];
             $temp = $picture['tmp_name'];
-            $finalname = "pic-".$name;
+            if(!empty($name)) {
+                $finalname = "pic-".$name;
+            } else {
+                $finalname = "";
+            }
 
             function shit($string) {
                 $makeAshit= strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $string));
@@ -422,7 +500,7 @@ class AdminQuery extends DbConnection {
                 return preg_replace($regex, "", $makeAshit); 
             }
 
-            $sql= "INSERT INTO `menu_sub`(`menu_id`, `cmenu_name`, `cmenu_url`, `page_type`, `cmenu_header`, `page_picture`, `page_content`) VALUES ('$id', '$title', '".shit($title)."', 'Dynamic', '".addslashes($header)."', '$finalname', '".addslashes($content)."')";
+            $sql= "INSERT INTO `menu_sub_sub`(`menu_id`, `sub_menu_id`, `cmenu_name`, `cmenu_url`, `page_type`, `cmenu_header`, `page_picture`, `page_content`) VALUES ('$id', '$sm', '$title', '".shit($title)."', 'Dynamic', '".addslashes($header)."', '$finalname', '".addslashes($content)."')";
 
             if(is_uploaded_file($temp)) {
                 move_uploaded_file($temp, "../uploads/images/".$finalname);
@@ -436,7 +514,15 @@ class AdminQuery extends DbConnection {
     }
 
     public function updateSubMenu($id, $title, $header, $content) {
-        $qry= "UPDATE `menu_sub` SET `cmenu_name`='$title' , `cmenu_header`='$header', `page_content`='".addslashes($content)."' WHERE cmenu_id='$id' ";
+        $qry= "UPDATE `menu_sub_sub` SET `cmenu_name`='$title' , `cmenu_header`='$header', `page_content`='".addslashes($content)."' WHERE cmenu_id='$id' ";
+        $query= $this->con->prepare($qry);
+        $query->execute();
+        $count= $query->rowCount();
+        return $count;
+    }
+
+    public function updateContentTabs($id, $title, $content) {
+        $qry= "UPDATE `menu_tabs` SET `tab_title`='$title' , `tab_content`='".addslashes($content)."' WHERE tab_id='$id' ";
         $query= $this->con->prepare($qry);
         $query->execute();
         $count= $query->rowCount();
@@ -457,32 +543,62 @@ class AdminQuery extends DbConnection {
     }
 
     public function bottomMenus() {
-        $stmt=$this->con->prepare("SELECT * FROM menu WHERE menu_side='Bottom' LIMIT 10 ");
+        $stmt=$this->con->prepare("SELECT * FROM menu WHERE menu_side='Bottom' AND menu_url!='home' LIMIT 10 ");
         $stmt->execute();
         return $stmt;
     }
 
 
-    public function getPageData($id) {
-        $stmt=$this->con->prepare("SELECT * FROM menu_sub WHERE cmenu_id='$id'");
+    // Sub menus
+    public function getSubMenuData($id) {
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE cmenu_id='$id'");
         $stmt->execute();
         return $stmt;
     }
 
+    // Sub menus per menu 
     public function getSubMenus($menu) {
-        $stmt=$this->con->prepare("SELECT * FROM menu_sub WHERE menu_id='$menu' ORDER BY cmenu_id ASC ");
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub WHERE menu_id='$menu' ORDER BY sub_menu_id ASC ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Sections per single page 
+    public function getSubMenusItem($menu) {
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub WHERE sub_menu_id='$menu' ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function countSubMenus($menu) {
+        $sql= "SELECT COUNT(*) FROM menu_sub WHERE menu_id='$menu'";
+        $count = $this->con->query($sql)->fetchColumn();
+        return $count;
+
+    }
+
+
+    // Get sub-sub menus
+    public function getContentSubMenus($submenu) {
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE sub_menu_id='$submenu' ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function getContentSubMenusByMenu($menu) {
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE menu_id='$menu' ");
         $stmt->execute();
         return $stmt;
     }
 
     public function getSpecificPageBySlug($slug) {
-        $stmt=$this->con->prepare("SELECT * FROM menu_sub WHERE cmenu_url='$slug'");
+        $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE cmenu_url='$slug' ");
         $stmt->execute();
         return $stmt;
     }
 
     public function check4PageExistance($slug) {
-        $sql = "SELECT COUNT(*) FROM `menu_sub` WHERE cmenu_url='$slug'";
+        $sql = "SELECT COUNT(*) FROM `menu_sub_sub` WHERE cmenu_url='$slug'";
         $count = $this->con->query($sql)->fetchColumn();
         return $count;
 

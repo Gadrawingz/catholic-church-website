@@ -174,7 +174,17 @@
 
 
 
-                <?php if(isset($_GET['allmenus'])) { ?>
+                <?php 
+
+                // remove
+                if(isset($_GET['rempage'])) {
+                  if($object->removeSpecificPage($_GET['rempage'])) {
+                    echo "<script>window.location='?allmenus'</script>";
+                    echo'<center><h5 class="btn btn-sm btn-danger text-center">Page is Removed!</h5></center>';
+                  }
+                }
+
+                if(isset($_GET['allmenus'])) { ?>
                   <div class="row col-md-12">
                     <div class="col-md-12">
                       <div class="d-flex justify-content-between align-items-center">
@@ -189,7 +199,6 @@
                           <th>#</th>
                           <th>Menu</th>
                           <th>Menu title</th>
-                          <th>#</th>
                         </tr>
                       </thead>
                       
@@ -206,31 +215,64 @@
                             <?php
                             if($menu['has_submenu']=='Yes') {
                             ?>
-                            <ul>
+                            <ul class="main-ul">
                               <?php
                                 $stmt3= $object->getSubMenus($menu['menu_id']);
                                 while($cmenu= $stmt3->FETCH(PDO::FETCH_ASSOC)) {
                                 ?>
-                                <li><a href="../admin/setup?preview=<?php echo $cmenu['cmenu_id']; ?>"><?php echo $cmenu['cmenu_name']; ?></a></li>
-                              <?php }} else if($menu['menu_url']!='home' && $menu['has_submenu']!='Yes'){ 
+                                <li class="unshitli">
+                                  <?php
+                                  if($menu['has_submenu']=='Yes') {
+                                    if($_SESSION['admin_role']=='Admin') { 
+                                      if($cmenu['sub_menu_id']!=10) {
+                                  ?>
+                                  <a class="btn btn-sm btn-success" href="../admin/setup?newmenu=<?php echo $menu['menu_id']; ?>&sm=<?php echo $cmenu['sub_menu_id']; ?>" style="margin-right: 2px;">Add menu</a>
+                                <?php } else { ?>
+                                  <button class="btn btn-sm btn-danger" disabled style="margin-right: 2px;">Categoties</button>
+                                <?php }}} ?>
+                                &nbsp;&raquo;&nbsp;<?php echo $cmenu['sub_menu_title']; ?>
+                                </li>
 
-                                $stmt39= $object->getSubMenus($menu['menu_id']);
+                                  <?php
+
+                                  $stmt6=$object->getContentSubMenus($cmenu['sub_menu_id']);
+                                  $testif= $stmt6->FETCH(PDO::FETCH_ASSOC);
+                                  if(!empty($testif['cmenu_name'])) { 
+                                  ?>
+                                  <ol class="inside-uls">
+                                    <?php
+                                    $stmt40=$object->getContentSubMenus($cmenu['sub_menu_id']);
+                                      while($csmenu= $stmt40->FETCH(PDO::FETCH_ASSOC)){
+                                    ?>
+                                      <li>
+                                        <?php if($cmenu['sub_menu_id']=='10') { ?>
+                                        <a href="articles?view" class="btn btn-sm btn-warning"
+                                        style="
+                                        margin: 6px 0 6px 0!important; 
+                                        padding: 3px 5px!important;"
+                                        >
+                                        <i class="ti-eye"></i></a>&nbsp;&nbsp;
+                                        <a href="articles?view" class="text-dark"><?php echo $csmenu['cmenu_name']; ?></a>
+                                      <?php } else { ?>
+                                        <a href="?rempage=<?php echo $csmenu['cmenu_id']; ?>" class="btn btn-sm btn-danger"
+                                        style="
+                                        margin: 6px 0 6px 0!important; 
+                                        padding: 3px 5px!important;"
+                                        onclick="return confirm('Are you sure you want to delete this page?')">
+                                        <i class="ti-trash"></i></a>&nbsp;&nbsp;
+                                        <a href="?preview=<?php echo $csmenu['cmenu_id']; ?>"><?php echo $csmenu['cmenu_name']; ?></a>
+                                      <?php } ?>
+                                      </li>
+                                    <?php } ?>
+                                  </ol>
+                                <?php }}} else if($menu['menu_url']!='home' && $menu['has_submenu']!='Yes'){ 
+
+                                $stmt39= $object->getContentSubMenusByMenu($menu['menu_id']);
                                 $cmenu39= $stmt39->FETCH(PDO::FETCH_ASSOC);
                                 ?>
-                                <a class="btn btn-sm btn-primary" href="../admin/setup?preview=<?php echo $cmenu39['menu_id']; ?>">Add content</a>
+                                <center><a class="btn btn-sm btn-primary" href="../admin/setup?preview=<?php echo $cmenu39['cmenu_id']; ?>">Add content</a></center>
                               <?php } ?>
                             </ul>
-                          </td>
-                          <td>
-                            <center>
-                              <?php
-                              if($menu['has_submenu']=='Yes') {
-                              ?>
-                              
-                              <?php if($_SESSION['admin_role']=='Admin') { ?>
-                              <a class="btn btn-sm btn-success" href="../admin/setup?newmenu=<?php echo $menu['menu_id']; ?>">Add menu</a>
-                              <?php }} ?>
-                            </center>
                           </td>
                         </tr>
                       <?php $num++; } ?>
@@ -242,12 +284,18 @@
 
 
 
-                <?php if(isset($_GET['newmenu'])) { ?>
-                  <h3 class="card-title">Add new menu </h3>
+                <?php if((isset($_GET['newmenu']) && isset($_GET['sm'])) && (!empty($_GET['newmenu']) && !empty($_GET['sm']))) { ?>
+                  <h3 class="card-title">
+                    <?php
+                    $stmt37= $object->getSubMenusItem($_GET['sm']);
+                    $sub_item= $stmt37->FETCH(PDO::FETCH_ASSOC);
+                    ?>
+                    Add new menu to <strong>&laquo;<u><?php echo $sub_item['sub_menu_title']; ?></u>&raquo;</strong> section &nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/setup?allmenus">Back to menus</a>
+                  </h3>
 
                   <?php
-                    if(isset($_POST['menusave'])) {
-                      if($object->regSubShit($_GET['newmenu'], $_POST['cmenu_title'], $_POST['cmenu_header'], $_FILES['page_picture'], $_POST['page_content'])) {
+                    if(isset($_POST['cmenusave'])) {
+                      if($object->regSubContentMenu($_GET['newmenu'], $_GET['sm'], $_POST['cmenu_title'], $_POST['cmenu_header'], $_POST['content_format'])) {
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
                       } else {
                         echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
@@ -267,16 +315,16 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="cmenu_picture">Menu picture (Optional)</label>
-                      <input type="file" class="form-control" id="page_picture" name="page_picture"/>
+                      <label for="cmenu_header">Content Format</label>
+                      <select class="form-control" name="content_format" required/>
+                          <option value="">Select format here</option>
+                          <option value="Untabbed">Normal style(No tabs)</option>
+                          <option value="Tabbed">Tabbed style (With tabs)</option>
+                      </select>
                     </div>
 
-                    <div class="form-group">
-                      <label for="page_content">Content</label>
-                      <textarea name="page_content" id="myTextarea"></textarea>
-                    </div>
+                    <button type="submit" class="btn btn-primary mr-2" name="cmenusave">Save</button>
 
-                    <button type="submit" class="btn btn-sm btn-primary mr-2" name="menusave">Save</button>
                   </form>
                 <?php } ?>
 
@@ -287,11 +335,10 @@
 
                 <?php if(isset($_GET['preview'])) {
 
-                  $stmt30= $object->getPageData($_GET['preview']);
+                  $stmt30= $object->getSubMenuData($_GET['preview']);
                   $prevrow= $stmt30->FETCH(PDO::FETCH_ASSOC);
                 ?>
                   <h3 class="card-title">Preview and Update this page </h3>
-
                   <?php
                     if(isset($_POST['pageupdate'])) {
                       if($object->updateSubMenu($_GET['preview'], $_POST['cmenu_title'], $_POST['cmenu_header'], $_POST['page_content'])) {
@@ -303,6 +350,7 @@
                     }
                   ?>
 
+                  <?php if($prevrow['page_type']=='Untabbed'){ ?>
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                       <label for="cmenu_title">Menu title(name)</label>
@@ -316,14 +364,79 @@
 
                     <div class="form-group">
                       <label for="page_content">Content</label>
-                      <textarea name="page_content" id="myTextarea"><?php echo $prevrow['page_content']; ?></textarea>
+                      <textarea name="page_content" id="textContent"><?php echo $prevrow['page_content']; ?></textarea>
                     </div>
-
+                    
                     <button type="submit" class="btn btn-sm btn-primary mr-2" name="pageupdate">Update</button>
                   </form>
-                <?php } ?>
+                  <?php } if($prevrow['page_type']=='Tabbed'){ ?>
+                    
+                    <?php 
+                    $tabCheck = $object->check4TabbedContent($_GET['preview']);
+                    if($tabCheck==0 || $tabCheck<5){ 
+
+                      if(!isset($_GET['newtab'])) { ?>
+                        <a href="?preview=<?php echo $_GET['preview'] ?>&newtab" class="btn btn-sm btn-primary">Add new tab</a><br>
+                      <?php } ?>
+                      
+                      <?php if(isset($_GET['newtab'])) {
+                        if(isset($_POST['tabsave'])) {
+                          if($object->addNewTab($_GET['preview'], $_POST['tab_title'], $_POST['tab_content']))  {
+                            echo'<center><h5 class="btn btn-sm btn-success text-center">Tab is added!</h5></center>';
+                            echo "<script>window.location='?preview=$_GET[preview]'</script>";
+                          } else {
+                            echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
+                            echo "<script>window.location='?preview=$_GET[preview]'</script>";
+                          }
+                        }
+                      ?>
+                      <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                          <label for="tab_title">Tab title</label>
+                          <input type="text" class="form-control" id="tab_title" name="tab_title" required/>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="">Tab content</label>
+                          <textarea name="tab_content" id="textContent"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary mr-2" name="tabsave">Save</button>&nbsp;<a href="?preview=<?php echo $_GET['preview'] ?>" class="btn btn-sm btn-danger">Cancel</a><br><br>
+                      </form>
+                      <?php } ?>
+                    <?php } ?>
 
 
+
+                    <?php
+                    $stmt73= $object->getTabsDataPerPage($_GET['preview']);
+                    while($tabbedrow= $stmt73->FETCH(PDO::FETCH_ASSOC)) {
+
+                      if(isset($_POST['tabupdate'])) {
+
+                        if($object->updateContentTabs($_POST['tab_id'], $_POST['tab_title'], $_POST['tab_content'])) {
+                          echo'<center><h5 class="btn btn-sm btn-success text-center">Updating is successful!</h5></center>';
+                          echo "<script>window.location='?preview=$_GET[preview]'</script>";
+                        } else {
+                          echo'<center><h5 class="btn btn-sm btn-danger text-center">Failed!</h5></center>';
+                      }
+                    }
+
+
+                    ?>
+                    <form class="forms-sample" method="POST" enctype="multipart/form-data" style="border: 2px solid blue!important; margin: 3px 0 15px 0!important; border-radius: 8px; padding: 8px; ">
+                      <br><hr>
+                      <div class="form-group">
+                          <label for="tab_title">Tab title</label>
+                          <input type="hidden" class="form-control" id="tab_id" name="tab_id" value="<?php echo $tabbedrow['tab_id']; ?>"/>
+                          <input type="text" class="form-control" id="tab_title" name="tab_title" value="<?php echo $tabbedrow['tab_title']; ?>" required/>
+                      </div>
+                      <div class="form-group">
+                        <label for="tab_content">Tab content</label>
+                        <textarea name="tab_content" class="tabContent"><?php echo $tabbedrow['tab_content']; ?></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-sm btn-success mr-2" name="tabupdate">Save changes</button>
+                    </form>
+                  <?php }}} ?><r>
 
 
 
@@ -333,8 +446,11 @@
               </div>
             </div>
           </div>
+          
         </div>
 
+        <!-- content-wrapper ends -->
+        <?php include('reusable/footer.php'); ?>
 
         <!-- Some script -->
         <script type="text/javascript">

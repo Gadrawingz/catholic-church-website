@@ -36,34 +36,10 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
   <link rel="stylesheet" href="../others/vendors/ti-icons/css/themify-icons.css">
   <link rel="stylesheet" href="../others/vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="../others/css/style.css">
-  
-  <script src="../js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../others/css/custom.css">
 
-  <script src='../others/summernote-0.8.18/summernote.min.js'></script>
   <link rel="stylesheet" href="../others/summernote-0.8.18/summernote.min.css">
-  <script src='../others/summernote-0.8.18/summernote.js'></script>
-  <link rel="stylesheet" href="../others/summernote-0.8.18/summernote.css">
-
-  <script src='reusable/tinymce/tinymce.min.js'></script>
-    <script>
-    tinymce.init({
-        selector: '#myTextarea',
-        height: 400,
-        theme: 'modern',
-        
-        plugins: [
-          'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-          'searchreplace wordcount visualblocks visualchars code fullscreen',
-          'insertdatetime media nonbreaking save table contextmenu directionality',
-          'emoticons template paste textcolor colorpicker textpattern imagetools'
-        ],
-        toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-        toolbar2: 'print preview media | forecolor backcolor emoticons',
-        image_advtab: true
-    });
-
-    </script>
-
+  <!-- <link rel="stylesheet" href="../others/summernote-0.8.18/summernote.css"> -->
   
   <!-- endinject -->
   <link rel="shortcut icon" href="../images/favicon.png" />
@@ -137,6 +113,13 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
             <a class="nav-link" href="../admin/manage?view">
               <i class="ti-user menu-icon"></i>
               <span class="menu-title">Admins & Authors</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="../admin/articles?all">
+              <i class="ti-book menu-icon"></i>
+              <span class="menu-title" title="Manage posts(articles)">Manage News&nbsp;<mark><?php echo $total_articles; ?></mark>
             </a>
           </li>
           <?php } ?>

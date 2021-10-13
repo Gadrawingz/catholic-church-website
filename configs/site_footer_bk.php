@@ -24,7 +24,9 @@
                                 while($menu= $stmt6->FETCH(PDO::FETCH_ASSOC)) { 
                                 ?>
                                 <li><a href="../page/<?php echo $menu['menu_url'];?>"><?php echo $menu['menu_name'];?></a></li>
-                                <?php } ?>
+                                <?php if($menu['menu_url']=='home') { ?>
+                                    <li><a href="../index">Homepage</a></li>
+                                <?php }} ?>
 
                             </ul>
                         </div>
@@ -38,7 +40,7 @@
                                 $stmt4= $object->readTop5Articles();
                                 while($rowp=$stmt4->FETCH(PDO::FETCH_ASSOC)) { 
                                 ?>
-                                <li><u><a href="../read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></u></li>
+                                <li style="text-transform: capitalize!important;"><u><a href="../read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></u></li>
                                 <?php } ?>
                             </ul>
                         </div>
@@ -92,5 +94,6 @@
     <script src="../js/custom.js"></script>
     <script src="../js/owl-carousel/owl.carousel.js"></script>
     <script src="../others/carousel/custom-slides.js"></script>
+    <script src="../others/customix/coolscript.js"></script>
 </body>
 </html>

@@ -69,3 +69,50 @@
 	border-left: 10px solid grey!important;
 	padding-left: 10px!important;
 }
+
+.iradu-nav {
+	padding-top: 10px;
+	color: #fadbd8!important;
+}
+
+
+
+
+
+/************** Tabbed shit ***************/
+
+/* Style tab links */
+.tablink {
+  background-color: #FFCC99;
+  color: white;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 20px;
+  width: 33.3%;
+  font-weight: bold;
+  border-right: none;
+  border-radius: 35px 35px 0 0!important;
+}
+
+.tablink:first-child {
+	/*border-left: 4px solid #777!important;*/
+}
+
+
+.tablink:hover {
+  background-color: #003399;
+  color: #85c1e9!important;
+}
+
+.tabcontent {
+	background-color: #FFF;
+	color: #000;
+	display: none;
+	padding: 40px 10px 10px 30px!important;
+	height: 100%;
+	border-left: 4px solid #777;
+	border-radius: 35px 35px 0 0!important;
+}

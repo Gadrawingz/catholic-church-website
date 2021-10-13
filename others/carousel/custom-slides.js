@@ -5,7 +5,6 @@ showSlides(); // call showslide method
 
 function showSlides(){
 	var i;
-
 	// get the array of divs' with classname image-sliderfade
 	var slides = document.getElementsByClassName("image-sliderfade"); 
 

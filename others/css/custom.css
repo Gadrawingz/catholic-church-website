@@ -1,0 +1,32 @@
+
+.main-ul {
+	list-style: none;
+	margin-left: 0;
+}
+
+.unshitli{
+	background-color: #1b4f72;
+	color: #FFF;
+	padding: 2px;
+	border-radius: 3px;
+	margin-bottom: 5px;
+}
+
+.inside-uls {
+	border-left: 2px solid #154360;
+	padding: 5;
+	padding: 4px;
+	list-style: none;
+	margin-bottom: 5px;
+	margin-left: 0;
+}
+
+
+.inside-uls li{
+	cursor: pointer;
+}
+
+.inside-uls li a{
+	font-size: 16.5px;
+
+}

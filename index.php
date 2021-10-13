@@ -13,29 +13,32 @@
                 </div>
             </div>
         </section>
-
+        
+        <div class="slide-container">
         <?php
         $stmt= $object->viewAllSlides();
         while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
         ?>
-        
-        <div class="slide-container">
             <!-- Full-width images with caption text -->
             <div class="image-sliderfade sfade">
                 <img src="uploads/slides/<?php echo $row['slide_image']; ?>" alt="<?php echo $row['slide_title']; ?>" class="slide-img">
                 <div class="slide-text">
-                    <h3><?php echo $row['slide_title']; ?></h3>
-                <p><?php echo $row['description']; ?></p>
+                    <h3 style="color:#FFF;"><?php echo $row['slide_title']; ?></h3>
+                    <p><?php echo $row['description']; ?></p>
                 </div>
                 
             </div>
+        <?php } ?>
         </div><br>
-    <?php } ?>
+    
         <!-- The dots/circles -->
         <div style="text-align:center">
+            <?php
+            $stmt4= $object->viewAllSlides();
+            while($row4= $stmt4->FETCH(PDO::FETCH_ASSOC)) {
+            ?>
             <span class="sdot"></span>
-            <span class="sdot"></span>
-            <span class="sdot"></span>
+            <?php } ?>
         </div><br>
 
 
@@ -59,7 +62,7 @@
                     </div>
                     <div>
                         <h3><a href="read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></h3>
-                        <p>Click to read...</p>
+                        <p><?php echo $object->showShortArticle(strip_tags($rowp['article_post']));?></p>
                     </div>
                 </div>
             </div>
@@ -164,7 +167,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-title text-center">
-                            <h2>Ishishikariza</h2>
+                            <h2>Encouragement</h2>
                         </div>
                     </div>
                 </div>
@@ -172,15 +175,15 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-6">
                         <div class="about-text">
-                            <p>Ishishikariza ni igikorwa.... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet quam id dui posuere blandit. Donec sollicitudin molestie malesuada. Pellentesque in ipsum id orci porta dapibus. Vivamus suscipit tortor eget felis porttitor volutpat.</p>
+                            <p>On becoming bishop, Father Lavigerie took the motto "Caritas" and as his episcopal coat of arms, a pelican. The Pelican is a bird which feeds its young with its own blood. His life illustrated the motto and coat of arms he had chosen. Arriving in Algiers, he addressed the Muslim Algerians: "I claim the privilege of loving you like sons " At the bishop's house he welcomed orphans and he founded two missionary societies to help them - the Missionaries of Africa (White Fathers) and the Missionary Sisters of Our Lady of Africa (White Sisters). He required from their members the same compassion that he himself had towards the Africans. "For our love to bear fruit, we must see Our Lord Himself in the patients we care for and in those touched by our charity and our patience"(Lavigerie).</p>
 
                             <ul class="withArrow">
-                                <li><span class="fa fa-angle-right"></span> Kwamamaza Inkuru Nziza</li>
-                                <li><span class="fa fa-angle-right"></span> Ubutabera n’amahoro</li>
-                                <li><span class="fa fa-angle-right"></span> Ibiganiro hagati y’amadini atandukanye nk’abali mu bandi</li>
-                                <li><span class="fa fa-angle-right"></span> Nibindi.</li>
+                                <li><span class="fa fa-angle-right"></span> Encouragement of Word of God</li>
+                                <li><span class="fa fa-angle-right"></span> Peace and Justice</li>
+                                <li><span class="fa fa-angle-right"></span> Conversations between different religions such as those of other religions</li>
+                                <li><span class="fa fa-angle-right"></span> Etc.</li>
                             </ul>
-                            <a href="#" class="btn btn-primary">Reba n'ibindi</a>
+                            <a href="page/god-is-calling-you" class="btn btn-primary">More info</a>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6">

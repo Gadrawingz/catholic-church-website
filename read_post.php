@@ -34,7 +34,7 @@ $check_post = $object->check4ArticleExistance($post_id);
     <section id="content">
         <div class="container content">
             <div class="row">
-                <div class="col-md-12 content-mains">
+                <div class="col-md-12 content-mains" style="border-left: 1px solid black;">
                     <div class="col-sm-4 info-blocks small-x-h">
                     <div class="info-blocks-in">
                         <h3>Published by:</h3>
@@ -64,16 +64,14 @@ $check_post = $object->check4ArticleExistance($post_id);
                 <div class="col-md-12">
                     <div class="about-logo">
                         <p><?php echo $result['article_post'];?></p>
-                    </div><hr class="hr-small"><br>
-                    
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-
     <section id="content">
-        <div class="container content">     
+        <div class="container content"><hr class="hr-small">     
         <div class="row service-v1 margin-bottom-40">
             <?php
             $stmt2= $object->readRecentArticles();
@@ -89,7 +87,7 @@ $check_post = $object->check4ArticleExistance($post_id);
                     </div>
                     <div>
                         <h3><a href="../read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></h3>
-                        <p><?php echo $object->showShortArticle("Read More...");?></p>
+                        <p><?php echo strip_tags($object->showShortArticle($rowp['article_post'])); ?></p>
                     </div>
                 </div>
             </div>

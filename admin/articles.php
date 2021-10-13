@@ -5,14 +5,15 @@
         <div class="content-wrapper">
 
 
-          <?php
-          if(isset($_GET['view'])) { 
-          ?>
           <div class="row">
             <div class="col-md-12 grid-margin">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
+                  <?php if(isset($_GET['view'])) { ?>
+                  <h3 class="font-weight-bold mb-0">All your published news</h3>
+                  <?php } else if(isset($_GET['all'])) { ?>
                   <h3 class="font-weight-bold mb-0">All published news</h3>
+                  <?php } ?>
                 </div>
                 
                 <div>
@@ -33,6 +34,8 @@
           <div class="row">
 
             <?php
+
+            if(isset($_GET['view'])) { 
               $num = 1;
               $stmt= $object->readArticlesByPublisher($admin_id);
               while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
@@ -57,21 +60,55 @@
                     <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
                   </p>
                   <p>
-                    <hr><small>Published on <strong><?php echo $row['article_date']; ?></strong></small>
+                    <hr><small>Created: <strong><?php echo $row['article_date']; ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>
                   </p>
                 </div>
               </div>
             </div>
-            <?php } ?></div><br><br><hr class="hr-grey"><br><br>
-          <?php } ?>
+            <?php }} ?>
+
+
+
+
+            <?php 
+            if(isset($_GET['all'])) { 
+              $stmt= $object->readArticlesAll();
+              while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
+                $post_views = $object->countArticleViews($row['article_id']);
+            ?>
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <a href="../admin/articles?update=<?php echo $row['article_id']; ?>">
+                    <h3 class="card-title text-primary"><?php echo $row['article_title']; ?></h3>
+                  </a>
+                  <p class="card-description">
+                    By <?php echo $row['firstname']." ".$row['lastname']; ?> 
+                    •<mark class="text-primary" >
+                      <?php if($post_views=='0') echo "No view"; ?>
+                      <?php if($post_views=='1') echo $post_views." view"; ?>
+                      <?php if($post_views>1) echo "<strong>".$post_views."</strong> views"; ?>
+                    </mark>&nbsp;•&nbsp;
+                    <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-success text-right" style="padding: 2.5px 5px!important;">Preview</a>
+                  </p>
+                  <p>
+                    <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
+                  </p>
+                  <p>
+                    <hr><small>Created: <strong><?php echo $row['article_date']; ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <?php } } ?>
+
+          </div><br><br><hr class="hr-grey"><br><br>
+
 
           <div class="row">
             <div class="col-md-12 grid-margin">
               <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  
-                </div>
-                
+                <div></div>
                 <div>
                   <a href="dashboard" class="btn btn-primary btn-icon-text btn-rounded">
                       <i class="ti-clipboard btn-icon-prepend"></i>Back
@@ -80,6 +117,12 @@
               </div>
             </div>
           </div>
+
+          <?php if(isset($_GET['sa'])) { ?>
+            <center><h5 class="btn btn-sm btn-danger text-center">Error!</h5></center>
+          <?php } if(isset($_GET['ea'])) { ?>
+            <center><h5 class="btn btn-sm btn-primary text-center">Successful!</h5></center>
+          <?php } ?>
 
           <?php if(isset($_GET['create'])) {
             if(isset($_POST['postsave'])) {
@@ -92,13 +135,6 @@
               }
             }
           ?>
-
-          <?php if(isset($_GET['sa'])) { ?>
-            <center><h5 class="btn btn-sm btn-danger text-center">Error!</h5></center>
-          <?php } if(isset($_GET['ea'])) { ?>
-            <center><h5 class="btn btn-sm btn-primary text-center">Successful!</h5></center>
-          <?php } ?>
-
           <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -119,13 +155,14 @@
                       <select class="form-control" id="a_category" name="a_category" required/>
                         <option value="News">News</option>
                         <option value="Stories">Stories</option>
+                        <option value="Projects">Projects</option>
                         <option value="Others">Others</option>
                       </select>
                     </div>
 
                     <div class="form-group">
                       <label for="a_post">Article post</label>
-                      <textarea name="a_post" id="myTextarea" required></textarea>
+                      <textarea name="a_post" id="textContent" cols="100" rows="100" required></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary mr-2" name="postsave">Save</button>
@@ -136,6 +173,7 @@
             </div>
           </div>
           <?php } ?>
+
 
 
 
@@ -182,13 +220,14 @@
                         <option value="<?php echo $uresult['article_category']; ?>"><?php echo $uresult['article_category']; ?></option>
                         <option value="News">News</option>
                         <option value="Stories">Stories</option>
+                        <option value="Projects">Projects</option>
                         <option value="Others">Others</option>
                       </select>
                     </div>
 
                     <div class="form-group">
                       <label for="a_post">Article post</label>
-                      <textarea name="a_post" id="myTextarea" required/><?php echo $uresult['article_post']; ?></textarea>
+                      <textarea name="a_post" id="textContent" rows="12" required/><?php echo $uresult['article_post']; ?></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary mr-2" name="postupd">Update</button>
@@ -199,3 +238,7 @@
             </div>
           </div>
           <?php } ?>
+
+
+          <!-- content-wrapper ends -->
+          <?php include('reusable/footer.php'); ?>

@@ -20,6 +20,7 @@ $articleid = $_REQUEST['article_id'];
 
 $stmt600= $object->readArticle($articleid);
 $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
+
 }
 
 
@@ -33,7 +34,12 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
     <title>
         <?php
         if(isset($menu_slug)) {
-            echo $result['cmenu_name']." - ";
+            if(!empty($result['cmenu_name'])) {
+                echo $result['cmenu_name']." - ";
+            } else {
+                echo "Error - ";
+            }
+
         } else if(isset($articleid)) {
             echo $articla['article_title']." - ";
         } ?><?php echo $aboutrow['site_name']; ?>
@@ -79,7 +85,7 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="../" style="color: #d5f5e3!important;"><?php echo $aboutrow['site_name']; ?></a>
+                        <a class="navbar-brand iradu-nav" href="../" style="color: #fadbd8!important;"><?php echo $aboutrow['site_name']; ?></a>
                     </div>
                     <div class="navbar-collapse collapse ">
                         <ul class="nav navbar-nav">
@@ -91,21 +97,35 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                         ?>
                             <li class="dropdown">
                                 <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="<?php echo $menu['menu_name']; ?>"><?php echo $menu['menu_name']; ?> <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    <?php
-                                    $stmt3= $object->getSubMenus($menu['menu_id']);
-                                    while($cmenu= $stmt3->FETCH(PDO::FETCH_ASSOC)) {
-                                    ?>
+                                <div class="dropdown-menu" <?php if($object->countSubMenus($menu['menu_id'])!=1) {?>style="left: -100px!important;"<?php }?>>
+                                    <!-- First level -->
+                                    <div class="mega-row" <?php if($object->countSubMenus($menu['menu_id'])==1) {?>style="width: 250px!important;"<?php }?> >
+                                       
+                                        <?php
+                                        $stmt3= $object->getSubMenus($menu['menu_id']);
+                                        while($submenu= $stmt3->FETCH(PDO::FETCH_ASSOC)) {
+                                        ?>
+                                        <div class="mega-column" <?php if($object->countSubMenus($menu['menu_id'])==1) {?>style="width: 100%!important;"<?php }?> >
+                                            <h4><?php echo $submenu['sub_menu_title']; ?></h4>
+                                            
+                                            <!-- Last level -->
+                                            <?php
+                                            $stmt4=$object->getContentSubMenus($submenu['sub_menu_id']);
+                                            while($csmenu= $stmt4->FETCH(PDO::FETCH_ASSOC)){
+                                            ?>
+                                            <a href="../page/<?php echo $csmenu['cmenu_url']; ?>"><?php echo $csmenu['cmenu_name']; ?></a>
+                                            <?php } ?>
 
-                                    <li><a href="../page/<?php echo $cmenu['cmenu_url']; ?>"><?php echo $cmenu['cmenu_name']; ?></a></li>
-                                    <?php } ?>
-                                </ul>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+                                </div>
                             </li>
 
                         <?php } else if($menu['menu_url']=='home') { ?>
                             <li><a href="../index"><?php echo $menu['menu_name']; ?></a></li>
                         <?php } else { ?>
-                            <li><a href="../page/<?php echo $menu['menu_url']; ?>"><?php echo $menu['menu_name']; ?></a></li>
+                            <li class=""><a href="../page/<?php echo $menu['menu_url']; ?>"><?php echo $menu['menu_name']; ?></a></li>
                         <?php }} ?>
 
                         </ul>

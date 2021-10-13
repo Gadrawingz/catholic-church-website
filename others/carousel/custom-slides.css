@@ -3,7 +3,6 @@
 }
 
 .slide-img {
-	
 	width: auto;
 	max-width: 100%;
 	max-height: 350px;
@@ -16,8 +15,7 @@
   max-width: 100%;
   position: relative;
   margin: auto;
-  border: 1px solid #000;
-  border-radius: 4px;
+  border-bottom: 2px solid #FF6600;
 }
 
 /* Caption text */
@@ -25,14 +23,15 @@
 .slide-text {
 	color: #a2d9ce;
 	font-size: 15px;
-	padding: 10px 5px;
+	padding: 40px 6px 6px 40px;
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
 	width: 50%;
 	background: rgba(0, 0, 0, 255);
 	text-align: left;
-	/*opacity: 40%;*/
+	border-top-left-radius: 90px;
+	opacity: 70%;
 	z-index: 1;
 }
 
