@@ -4,7 +4,6 @@
       <div class="main-panel">
         <div class="content-wrapper">
 
-
           <?php if(isset($_GET['view'])) { ?>
           <div class="row">
             <div class="col-md-12 grid-margin">
@@ -25,26 +24,24 @@
           <?php if(isset($_GET['message'])) { ?>
             <center><h5 class="btn btn-sm btn-success text-center">Operation is successful!</h5></center>
           <?php } ?>
+
           <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-              <div class="card position-relative">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
                 <div class="card-body">
-                  <div class="row col-md-12">
-                    <!-- Xtt card row -->
-                    <table class="table table-bordered">
+                  <h3 class="card-title">View Admins</h3>
+                  <div class="table-responsive">
+                    <table class="table table-striped">
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>First name</th>
-                          <th>Last name</th>
-                          <th>Username</th>
-                          <th>Email</th>
-                          <th>Phone</th>
+                          <th>User</th>
+                          <th>Names/Email</th>
+                          <th>Username/Phone</th>
                           <th>Role</th>
                           <th class="text-center">Action</th>
                         </tr>
                       </thead>
-                      
                       <tbody>
                       <?php
                         $num = 1;
@@ -53,11 +50,13 @@
                       ?>
                         <tr>
                           <td><?php echo $num; ?></td>
-                          <td><?php echo $row['firstname']; ?></td>
-                          <td><?php echo $row['lastname']; ?></td>
-                          <td><?php echo $row['username']; ?></td>
-                          <td><?php echo $row['email']; ?></td>
-                          <td><?php echo $row['phone']; ?></td>
+                          <td class="py-1">
+                            <img src="../images/faces/face1.jpg" alt="image"/>
+                          </td>
+                          <td><b><?php echo $row['firstname']." ".$row['lastname']; ?></b><br><br>
+                            <?php echo $row['email']; ?></td>
+                          <td><b><?php echo $row['username']; ?></b><br><br>
+                            <?php echo $row['phone']; ?></td>
                           <td><?php echo $row['given_role']; ?></td>
                           <td class="text-center"><a class="btn btn-sm btn-primary" href="../admin/manage?update=<?php echo $row['admin_id']; ?>">Update</a></td>
                         </tr>

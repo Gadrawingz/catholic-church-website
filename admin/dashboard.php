@@ -62,7 +62,7 @@
                     <div class="mr-5 mt-3">
                       <h5>
                         <?php if($total_articles==0) { echo "No post"; } 
-                        else if($total_articles==1) { echo "1 total posts"; }
+                        else if($total_articles==1) { echo "1 total post"; }
                         else { echo $total_articles." total posts"; } ?>
                       </h5>
                       <?php if($total_articles!=0) { ?>
@@ -83,12 +83,12 @@
 
 
                     <div class="mr-5 mt-3">
-                      <h5><?php echo $total_authors; ?> Authors</h5>
+                      <h5><?php echo $total_authors; ?> Author(s)</h5>
                       <center><a href="manage?view">View</a></center>
                     </div>
                     
                     <div class="mr-5 mt-3">
-                      <h5><?php echo $total_messages; ?> Messages</h5>
+                      <h5><?php echo $total_messages; ?> Message(s)</h5>
                       <center><a href="messages">View</a></center>
                     </div>
                   </div>

@@ -3,21 +3,21 @@
 
       <!-- partial -->
       <div class="main-panel">
-        <div class="content-wrapper bg-warning">
+        <div class="content-wrapper bg-secondary">
         <!-- 
         @Gadrawingz 
         Coding hand by https://github.com/Gadrawingz 
         -->
           <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
-              <h4 style="color: #154360; margin-bottom: 1px!important;">Help & Support</h4>
+              <b><h4 style="color: aliceblue; margin-bottom: 1px!important;">Help & Support</h4></b>
             </div>
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Welcome to help page</h4>
                   <p>
-                    This page give you some guidance about this system in brief way which help you to know how everything should be used
+                    This page give you some guidance about this system (for website) in brief way which help you to know how everything should be used
                   </p>
                 </div>
               </div>

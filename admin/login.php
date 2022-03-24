@@ -8,25 +8,25 @@ if(isset($_SESSION['admin_id'])) {
 }
 
 if(isset($_POST['login'])) {
-    if(empty($_POST['email']) || empty($_POST['password'])) {
-        header("Location:../admin/login?message=empty_fields");
-    }
+  if(empty($_POST['email']) || empty($_POST['password'])) {
+    header("Location:../admin/login?message=empty_fields");
+  }
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $stmt = $object->adminLogin($email, $password);
+  $email = $_POST['email'];
+  $password = $_POST['password'];
+  $stmt = $object->adminLogin($email, $password);
 
-    while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
-        if(($email == $row['email']) && ($password == $row['password'])) {
-            $_SESSION['admin_id'] = $row['admin_id'];
-            $_SESSION['admin_names'] = $row['firstname']." ".$row['lastname'];
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['admin_role'] = $row['given_role'];
-            echo "<script>window.location='../admin/dashboard'</script>"; 
-        } else {
-            echo "<script>window.location='../admin/login?message=login_error'</script>"; 
-        }
+  while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
+    if(($email == $row['email']) && ($password == $row['password'])) {
+      $_SESSION['admin_id'] = $row['admin_id'];
+      $_SESSION['admin_names'] = $row['firstname']." ".$row['lastname'];
+      $_SESSION['username'] = $row['username'];
+      $_SESSION['admin_role'] = $row['given_role'];
+      echo "<script>window.location='../admin/dashboard'</script>"; 
+    } else {
+      echo "<script>window.location='../admin/login?message=login_error'</script>"; 
     }
+  }
 }
 
 ?>
@@ -57,7 +57,7 @@ if(isset($_POST['login'])) {
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
               <div class="brand-logo">
-                <img src="../images/profile/logo.png" alt="logo" style="width: 100%;">
+                <img src="../images/profile/logo_back.png" alt="logo" style="width: 100%;">
               </div>
               <h3>Sign in to continue!</h3>
               <form class="pt-3" method="POST">
