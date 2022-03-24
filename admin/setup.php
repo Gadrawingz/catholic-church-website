@@ -12,13 +12,11 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="card-body">
-                      <h4 class="card-title">Settings</h4>
-                      <div class="template-demo">
-                        <a href="../admin/setup?allmenus" class="btn btn-success">View Menus</a>
-                        <a href="../admin/setup?allslides" class="btn btn-primary">Manage slides</a>
-                        <a href="../admin/setup?newslide" class="btn btn-primary">New slide</a>
-                        
-                      </div>
+                      <a href="../admin/setup?newslide" class="btn btn-primary">New slide</a>
+                      <a href="../admin/setup?allslides" class="btn btn-primary">Manage slides</a>
+                      &nbsp;&bull;&nbsp;
+                      <a href="../admin/setup?newvideo" class="btn btn-success text-right">New Video</a>
+                      <a href="../admin/setup?all_vid" class="btn btn-success">Manage all videos</a>
                     </div>
                   </div>
                 </div>
@@ -33,7 +31,7 @@
                   <div class="row col-md-12">
                     <div class="col-md-12">
                       <div class="d-flex justify-content-between align-items-center">
-                    <div><h3 class="font-weight-bold mb-0">All slides</h3></div>
+                    <div><h4 class="font-weight-bold mb-0">All slides (<span style="font-style: normal!important;">Only first 4 slides can be shown</span>)</h4></div>
 
                     <div>
                       <a href="setup?newslide" class="btn btn-primary btn-icon-text btn-rounded">
@@ -47,11 +45,9 @@
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>#</th>
-                          <th>Title</th>
-                          <th>Description</th>
-                          <th>Picture</th>
-                          <th class="text-center">#</th>
+                          <th>Slide / Description</th>
+                          <th class="text-center">Picture</th>
+                          <th class="text-center">Settings</th>
                         </tr>
                       </thead>
                       
@@ -62,11 +58,19 @@
                         while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
                       ?>
                         <tr>
-                          <td><?php echo $num; ?></td>
-                          <td><?php echo $object->showShortText12($row['slide_title']); ?></td>
-                          <td><?php echo $object->showShortText12($row['description']); ?></td>
-                          <td><img src="../uploads/slides/<?php echo $row['slide_image']; ?>"></td>
-                          <td class="text-center"><a class="btn btn-sm btn-primary" href="?upslide=<?php echo $row['slide_id']; ?>">Update</a></td>
+                          <td>
+                            <span class="font-weight-bold" style="border-bottom: 1px solid blue;">
+                              <?php echo $object->showShortText18($row['slide_title']); ?>
+                            </span><br><br>
+                            &raquo; <i style="font-size: 11px;">
+                            <?php echo $object->showShortTextByNum(38, $row['description']); ?>
+                            </i><br>
+                          </td>
+
+                          <td class="text-center">
+                            <img src="../uploads/slides/<?php echo $row['slide_image']; ?>" style="width: 100px; height: 100px;">
+                          </td>
+                          <td class="text-center"><a class="btn btn-sm btn-primary" href="?upslide=<?php echo $row['slide_id']; ?>">Replace</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')" href="?rem_slide=<?php echo $row['slide_id']; ?>"><i class="ti-trash" title="Edit"></i></a></td>
                         </tr>
                       <?php $num++; } ?>
                       </tbody>
@@ -75,19 +79,17 @@
                   </div>
                 <?php } ?>
 
-
-
-
                 <?php if(isset($_GET['newslide'])) { ?>
-                  <h3 class="card-title">Add new slide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/dashboard" class="btn btn-sm btn-danger text-right">Exit</a></h3>
+                  <h3 class="card-title">Add new slide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/allslides" class="btn btn-sm btn-danger text-right">Close</a></h3>
 
                   <?php
-
                     if(isset($_POST['slidesave'])) {
                       if($object->addSlide($_POST['slide_title'], $_POST['description'], $_FILES['slide_picture'])) {
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?allslides'</script>";
                       } else {
-                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action failed!</h5></center>';
+                        echo "<script>window.location='?allslides'</script>";
                       }
                     }
                   ?>
@@ -115,11 +117,17 @@
 
 
 
-
-
                 <?php if(isset($_GET['upslide'])) { ?>
-                  <h3 class="card-title">Update slide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/dashboard" class="btn btn-sm btn-danger text-right">Exit</a></h3>
-
+                  <h3 class="card-title">
+                    Update slide &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <?php if(!isset($_GET['view_pic'])) { ?>
+                      <a href="../admin/setup?upslide=<?php echo $_GET['upslide']; ?>&view_pic" class="btn btn-sm btn-primary font-weight-bold">View Slide Image</a>
+                    <?php } else { ?>
+                      <a href="../admin/setup?upslide=<?php echo $_GET['upslide']; ?>" class="btn btn-sm btn-warning text-white font-weight-bold">Hide Image</a>
+                    <?php } ?>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="?allslides" class="btn btn-sm btn-danger text-right">Close</a>
+                  </h3>
                   <?php
                   $stmt80= $object->viewOneSlide($_GET['upslide']);
                   $editrow = $stmt80->FETCH(PDO::FETCH_ASSOC);
@@ -128,12 +136,19 @@
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
                         echo "<script>window.location='?allslides'</script>";
                       } else {
-                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action failed!</h5></center>';
                       }
                     }
                   ?>
-
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                    <?php if(isset($_GET['view_pic'])) { ?>
+                    <div class="form-group">
+                      <div>
+                        <img style="border: 1.5px solid green; width: 50%!important; opacity: 40%!important;" src="../uploads/slides/<?php echo $editrow['slide_image']; ?>">
+                      </div>
+                    </div>
+                    <?php } ?>
+
                     <div class="form-group">
                       <label for="slide_title">Slide title</label>
                       <input type="text" class="form-control" id="slide_title" name="slide_title" value="<?php echo $editrow['slide_title'];?>" required/>
@@ -142,15 +157,6 @@
                     <div class="form-group">
                       <label for="description">Description</label>
                       <input type="text" class="form-control" id="description" name="description"  value="<?php echo $editrow['description'];?>"/>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="pic_preview">Current picture</label>
-                      <span class="btn-sm btn-primary" id="viewppic" style="padding: 2px 6px!important;">View</span>
-                      <span class="btn-sm btn-success" id="hideppic" style="padding: 2px 6px!important;">Hide</span>
-                      <div style="border: 1.5px solid green;" id="prevppic">
-                        <img src="../uploads/slides/<?php echo $editrow['slide_image']; ?>">
-                      </div>
                     </div>
 
                     <div class="form-group">
@@ -166,29 +172,37 @@
 
 
 
-
-
-
-
-
-
-
-
                 <?php 
-
-                // remove
-                if(isset($_GET['rempage'])) {
-                  if($object->removeSpecificPage($_GET['rempage'])) {
+                // Removal side
+                if(isset($_GET['rem_slide'])) {
+                  if($object->deleteSlide($_GET['rem_slide'])) {
+                    echo'<center><h5 class="btn btn-sm btn-danger text-center">Slide has been removed!</h5></center>';
                     echo "<script>window.location='?allmenus'</script>";
-                    echo'<center><h5 class="btn btn-sm btn-danger text-center">Page is Removed!</h5></center>';
                   }
                 }
 
-                if(isset($_GET['allmenus'])) { ?>
+                if(isset($_GET['del_vid'])) {
+                  if($object->deleteVideo($_GET['del_vid'])) {
+                    echo'<center><h5 class="btn btn-sm btn-danger text-center">Video has been removed in the list!</h5></center>';
+                    echo "<script>window.location='?all_vid'</script>";
+                  }
+                }?>
+
+
+
+
+
+                <?php if(isset($_GET['all_vid'])) { ?>
                   <div class="row col-md-12">
                     <div class="col-md-12">
                       <div class="d-flex justify-content-between align-items-center">
-                    <div><h3 class="font-weight-bold mb-0">Menus</h3></div>
+                    <div><h4 class="font-weight-bold mb-0">All uploaded videos (<span style="font-style: normal!important;">Only 6 videos is allowed to be shown to website</span>)</h4></div>
+
+                    <div>
+                      <a href="setup?newvideo" class="btn btn-primary btn-icon-text btn-rounded">
+                        <i class="ti-clipboard btn-icon-prepend"></i>Add new
+                      </a>
+                    </div>
                   </div><hr>
 
                   <div class="row col-md-12">
@@ -196,83 +210,30 @@
                     <table class="table table-bordered">
                       <thead>
                         <tr>
-                          <th>#</th>
-                          <th>Menu</th>
-                          <th>Menu title</th>
+                          <th>Video Description</th>
+                          <th class="text-center">Video thumbnail</th>
                         </tr>
                       </thead>
                       
                       <tbody>
                       <?php
                         $num = 1;
-                        $stmt2= $object->getAllMenus();
-                        while($menu= $stmt2->FETCH(PDO::FETCH_ASSOC)) { 
+                        $stmt= $object->viewAllVideos();
+                        while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
                       ?>
                         <tr>
-                          <td><strong><?php echo $num; ?></strong></td>
-                          <td><?php echo $menu['menu_name']; ?></td>
                           <td>
-                            <?php
-                            if($menu['has_submenu']=='Yes') {
-                            ?>
-                            <ul class="main-ul">
-                              <?php
-                                $stmt3= $object->getSubMenus($menu['menu_id']);
-                                while($cmenu= $stmt3->FETCH(PDO::FETCH_ASSOC)) {
-                                ?>
-                                <li class="unshitli">
-                                  <?php
-                                  if($menu['has_submenu']=='Yes') {
-                                    if($_SESSION['admin_role']=='Admin') { 
-                                      if($cmenu['sub_menu_id']!=10) {
-                                  ?>
-                                  <a class="btn btn-sm btn-success" href="../admin/setup?newmenu=<?php echo $menu['menu_id']; ?>&sm=<?php echo $cmenu['sub_menu_id']; ?>" style="margin-right: 2px;">Add menu</a>
-                                <?php } else { ?>
-                                  <button class="btn btn-sm btn-danger" disabled style="margin-right: 2px;">Categoties</button>
-                                <?php }}} ?>
-                                &nbsp;&raquo;&nbsp;<?php echo $cmenu['sub_menu_title']; ?>
-                                </li>
+                            <span class="font-weight-bold">
+                              <br><span style="font-size: 11px;">
+                              <?php echo $object->showShortTextByNum(30, $row['description']); ?><br><br>
+                              <?php echo $object->showShortTextByNum(30, $row['description_rw']); ?> (Kinyarwanda)
+                            </span><br><br>
+                            <a class="btn btn-sm btn-primary" href="?upd_vid=<?php echo $row['video_id']; ?>">Edit</a>&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-sm btn-danger" href="?del_vid=<?php echo $row['video_id']; ?>" onclick="return confirm('Are you sure you want to remove this video?')"title="Remove"><b>&nbsp;&nbsp;X&nbsp;</b>&nbsp;</a>
+                          </td>
 
-                                  <?php
-
-                                  $stmt6=$object->getContentSubMenus($cmenu['sub_menu_id']);
-                                  $testif= $stmt6->FETCH(PDO::FETCH_ASSOC);
-                                  if(!empty($testif['cmenu_name'])) { 
-                                  ?>
-                                  <ol class="inside-uls">
-                                    <?php
-                                    $stmt40=$object->getContentSubMenus($cmenu['sub_menu_id']);
-                                      while($csmenu= $stmt40->FETCH(PDO::FETCH_ASSOC)){
-                                    ?>
-                                      <li>
-                                        <?php if($cmenu['sub_menu_id']=='10') { ?>
-                                        <a href="articles?view" class="btn btn-sm btn-warning"
-                                        style="
-                                        margin: 6px 0 6px 0!important; 
-                                        padding: 3px 5px!important;"
-                                        >
-                                        <i class="ti-eye"></i></a>&nbsp;&nbsp;
-                                        <a href="articles?view" class="text-dark"><?php echo $csmenu['cmenu_name']; ?></a>
-                                      <?php } else { ?>
-                                        <a href="?rempage=<?php echo $csmenu['cmenu_id']; ?>" class="btn btn-sm btn-danger"
-                                        style="
-                                        margin: 6px 0 6px 0!important; 
-                                        padding: 3px 5px!important;"
-                                        onclick="return confirm('Are you sure you want to delete this page?')">
-                                        <i class="ti-trash"></i></a>&nbsp;&nbsp;
-                                        <a href="?preview=<?php echo $csmenu['cmenu_id']; ?>"><?php echo $csmenu['cmenu_name']; ?></a>
-                                      <?php } ?>
-                                      </li>
-                                    <?php } ?>
-                                  </ol>
-                                <?php }}} else if($menu['menu_url']!='home' && $menu['has_submenu']!='Yes'){ 
-
-                                $stmt39= $object->getContentSubMenusByMenu($menu['menu_id']);
-                                $cmenu39= $stmt39->FETCH(PDO::FETCH_ASSOC);
-                                ?>
-                                <center><a class="btn btn-sm btn-primary" href="../admin/setup?preview=<?php echo $cmenu39['cmenu_id']; ?>">Add content</a></center>
-                              <?php } ?>
-                            </ul>
+                          <td class="text-center">
+                            <iframe height="" src="<?php echo "https://www.youtube.com/embed/".explode('v=', $row['video_url'], 2)[1]."?autoplay=1&mute=1"; ?>" frameborder="0" allowfullscreen></iframe>
                           </td>
                         </tr>
                       <?php $num++; } ?>
@@ -282,162 +243,93 @@
                   </div>
                 <?php } ?>
 
+                <?php if(isset($_GET['newvideo'])) { ?>
+                  <h3 class="card-title">Add new video links &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="?all_vid" class="btn btn-sm btn-danger text-right">Close</a></h3>
 
-
-                <?php if((isset($_GET['newmenu']) && isset($_GET['sm'])) && (!empty($_GET['newmenu']) && !empty($_GET['sm']))) { ?>
-                  <h3 class="card-title">
-                    <?php
-                    $stmt37= $object->getSubMenusItem($_GET['sm']);
-                    $sub_item= $stmt37->FETCH(PDO::FETCH_ASSOC);
-                    ?>
-                    Add new menu to <strong>&laquo;<u><?php echo $sub_item['sub_menu_title']; ?></u>&raquo;</strong> section &nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/setup?allmenus">Back to menus</a>
-                  </h3>
-
+                  <?php if($object->countVideosNum()>8) { ?>
+                    <p class="text-black font-weight-semibold" style="border: 2px solid orange; border-radius: 3px; padding: 5px;">
+                      <b>Notice: Don't add more links, replace existing ones!</b><br>
+                      This page is for adding fewer videos to represent your <br>
+                      youtube channel as Its not good to add too much videos, <br>
+                      Instead, other videos can be found by visiting channel.<br>
+                      Maximum of 8 videos is enough, otherwise, Replace existing videos.
+                    </p>
+                  <?php } ?>
+                  
                   <?php
-                    if(isset($_POST['cmenusave'])) {
-                      if($object->regSubContentMenu($_GET['newmenu'], $_GET['sm'], $_POST['cmenu_title'], $_POST['cmenu_header'], $_POST['content_format'])) {
+                    if(isset($_POST['yt_btn'])) {
+                      if($object->addNewVideoLink($_POST['video_full'], $_POST['description'], $_POST['description_rw'])) {
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?all_vid'</script>";
                       } else {
-                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
+                        echo "<script>window.location='?all_vid'</script>";
                       }
                     }
                   ?>
-
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
-                      <label for="cmenu_title">Menu title</label>
-                      <input type="text" class="form-control" id="cmenu_title" name="cmenu_title" placeholder="Menu title" required/>
+                      <label for="video_full">Video full URL...</label>
+                      <input type="text" class="form-control" id="video_full" name="video_full" placeholder="Video full link..." required/>
                     </div>
 
                     <div class="form-group">
-                      <label for="cmenu_header">Menu header</label>
-                      <input type="text" class="form-control" id="cmenu_header" name="cmenu_header" placeholder="Menu header"/>
+                      <label for="description">Video description</label>
+                      <textarea class="form-control" id="description" rows="4" name="description" placeholder="Your Description..."></textarea>
                     </div>
 
                     <div class="form-group">
-                      <label for="cmenu_header">Content Format</label>
-                      <select class="form-control" name="content_format" required/>
-                          <option value="">Select format here</option>
-                          <option value="Untabbed">Normal style(No tabs)</option>
-                          <option value="Tabbed">Tabbed style (With tabs)</option>
-                      </select>
+                      <label for="description_rw">Video description <span class="text-primary">(Kinyarwanda)</span></label>
+                      <textarea class="form-control" id="description_rw" rows="4" name="description_rw" placeholder="Your Description in Kinyarwanda..."></textarea>
                     </div>
+                    <?php if($object->countVideosNum()<=8) { ?>
+                    <button type="submit" class="btn btn-primary mr-2" name="yt_btn">Save</button>
+                    <?php } ?>
 
-                    <button type="submit" class="btn btn-primary mr-2" name="cmenusave">Save</button>
-
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/setup?all_vid" class="btn btn-success text-right">View added videos</a>
                   </form>
                 <?php } ?>
 
 
 
 
-
-
-                <?php if(isset($_GET['preview'])) {
-
-                  $stmt30= $object->getSubMenuData($_GET['preview']);
-                  $prevrow= $stmt30->FETCH(PDO::FETCH_ASSOC);
-                ?>
-                  <h3 class="card-title">Preview and Update this page </h3>
+                <?php if(isset($_GET['upd_vid'])) { ?>
+                  <h3 class="card-title">
+                    Update video &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="?all_vid" class="btn btn-sm btn-danger text-right">Close</a>
+                  </h3>
                   <?php
-                    if(isset($_POST['pageupdate'])) {
-                      if($object->updateSubMenu($_GET['preview'], $_POST['cmenu_title'], $_POST['cmenu_header'], $_POST['page_content'])) {
-                        echo'<center><h5 class="btn btn-sm btn-success text-center">Updating is successful!</h5></center>';
-                        echo "<script>window.location='?allmenus'</script>";
+                  $stmt90= $object->viewOneVideo($_GET['upd_vid']);
+                  $editrow = $stmt90->FETCH(PDO::FETCH_ASSOC);
+                    if(isset($_POST['vid_updatebtn'])) {
+                      if($object->updateVideoLink($_GET['upd_vid'], $_POST['video_full'], $_POST['description'], $_POST['description_rw'])) {
+                        echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?all_vid'</script>";
                       } else {
-                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
                       }
                     }
                   ?>
-
-                  <?php if($prevrow['page_type']=='Untabbed'){ ?>
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
-                      <label for="cmenu_title">Menu title(name)</label>
-                      <input type="text" class="form-control" id="cmenu_title" name="cmenu_title" value="<?php echo $prevrow['cmenu_name']; ?>" required/>
+                      <label for="video_full">Video full URL...</label>
+                      <input type="text" class="form-control" id="video_full" name="video_full" value="<?php echo $editrow['video_url'];?>" required/>
                     </div>
 
                     <div class="form-group">
-                      <label for="cmenu_header">Menu header</label>
-                      <input type="text" class="form-control" id="cmenu_header" name="cmenu_header" value="<?php echo $prevrow['cmenu_header']; ?>"/>
+                      <label for="description">Video description</label>
+                      <textarea class="form-control" id="description" rows="4" name="description"><?php echo $editrow['description'];?></textarea>
                     </div>
 
                     <div class="form-group">
-                      <label for="page_content">Content</label>
-                      <textarea name="page_content" id="textContent"><?php echo $prevrow['page_content']; ?></textarea>
+                      <label for="description_rw">Video description <span class="text-primary">(Kinyarwanda)</span></label>
+                      <textarea class="form-control" id="description_rw" rows="4" name="description_rw"><?php echo $editrow['description_rw'];?></textarea>
                     </div>
-                    
-                    <button type="submit" class="btn btn-sm btn-primary mr-2" name="pageupdate">Update</button>
+
+                    <button type="submit" class="btn btn-primary mr-2" name="vid_updatebtn">Update</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="../admin/setup?all_vid" class="btn btn-success text-right">Back</a>
                   </form>
-                  <?php } if($prevrow['page_type']=='Tabbed'){ ?>
-                    
-                    <?php 
-                    $tabCheck = $object->check4TabbedContent($_GET['preview']);
-                    if($tabCheck==0 || $tabCheck<5){ 
-
-                      if(!isset($_GET['newtab'])) { ?>
-                        <a href="?preview=<?php echo $_GET['preview'] ?>&newtab" class="btn btn-sm btn-primary">Add new tab</a><br>
-                      <?php } ?>
-                      
-                      <?php if(isset($_GET['newtab'])) {
-                        if(isset($_POST['tabsave'])) {
-                          if($object->addNewTab($_GET['preview'], $_POST['tab_title'], $_POST['tab_content']))  {
-                            echo'<center><h5 class="btn btn-sm btn-success text-center">Tab is added!</h5></center>';
-                            echo "<script>window.location='?preview=$_GET[preview]'</script>";
-                          } else {
-                            echo'<center><h5 class="btn btn-sm btn-danger text-center">Operation failed!</h5></center>';
-                            echo "<script>window.location='?preview=$_GET[preview]'</script>";
-                          }
-                        }
-                      ?>
-                      <form class="forms-sample" method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                          <label for="tab_title">Tab title</label>
-                          <input type="text" class="form-control" id="tab_title" name="tab_title" required/>
-                        </div>
-
-                        <div class="form-group">
-                          <label for="">Tab content</label>
-                          <textarea name="tab_content" id="textContent"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-primary mr-2" name="tabsave">Save</button>&nbsp;<a href="?preview=<?php echo $_GET['preview'] ?>" class="btn btn-sm btn-danger">Cancel</a><br><br>
-                      </form>
-                      <?php } ?>
-                    <?php } ?>
-
-
-
-                    <?php
-                    $stmt73= $object->getTabsDataPerPage($_GET['preview']);
-                    while($tabbedrow= $stmt73->FETCH(PDO::FETCH_ASSOC)) {
-
-                      if(isset($_POST['tabupdate'])) {
-
-                        if($object->updateContentTabs($_POST['tab_id'], $_POST['tab_title'], $_POST['tab_content'])) {
-                          echo'<center><h5 class="btn btn-sm btn-success text-center">Updating is successful!</h5></center>';
-                          echo "<script>window.location='?preview=$_GET[preview]'</script>";
-                        } else {
-                          echo'<center><h5 class="btn btn-sm btn-danger text-center">Failed!</h5></center>';
-                      }
-                    }
-
-
-                    ?>
-                    <form class="forms-sample" method="POST" enctype="multipart/form-data" style="border: 2px solid blue!important; margin: 3px 0 15px 0!important; border-radius: 8px; padding: 8px; ">
-                      <br><hr>
-                      <div class="form-group">
-                          <label for="tab_title">Tab title</label>
-                          <input type="hidden" class="form-control" id="tab_id" name="tab_id" value="<?php echo $tabbedrow['tab_id']; ?>"/>
-                          <input type="text" class="form-control" id="tab_title" name="tab_title" value="<?php echo $tabbedrow['tab_title']; ?>" required/>
-                      </div>
-                      <div class="form-group">
-                        <label for="tab_content">Tab content</label>
-                        <textarea name="tab_content" class="tabContent"><?php echo $tabbedrow['tab_content']; ?></textarea>
-                      </div>
-                      <button type="submit" class="btn btn-sm btn-success mr-2" name="tabupdate">Save changes</button>
-                    </form>
-                  <?php }}} ?><r>
-
+                <?php } ?>
 
 
 
@@ -451,24 +343,3 @@
 
         <!-- content-wrapper ends -->
         <?php include('reusable/footer.php'); ?>
-
-        <!-- Some script -->
-        <script type="text/javascript">
-          document.getElementById('prevppic').style.display ='none';
-          document.getElementById('hideppic').style.display ='none';
-
-          //document.getElementById('viewppic').style.display ='none';
-          document.addEventListener('click', doStuffs).getElementById('viewppic');
-          function doStuffs() {
-            document.getElementById('viewppic').style.display ='none';
-            document.getElementById('prevppic').style.display ='block';
-            document.getElementById('hideppic').style.display ='block';
-          }
-
-          document.addEventListener('click', hideStuffs).getElementById('hideppic');
-          function hideStuffs() {
-            document.getElementById('prevppic').style.display ='none';
-            document.getElementById('hideppic').style.display ='none';
-          }
-
-        </script>

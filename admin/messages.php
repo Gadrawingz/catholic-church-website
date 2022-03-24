@@ -27,25 +27,26 @@
             <center><h5 class="btn btn-sm btn-success text-center">Reply is successful!</h5></center>
           <?php } ?>
 
+          <?php if(isset($_GET['dsuccess'])) { ?>
+            <center><h5 class="btn btn-sm btn-danger text-center">Message is successfully deleted!</h5></center>
+          <?php } ?>
+
           <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-              <div class="card position-relative">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
                 <div class="card-body">
-                  <div class="row col-md-12 table-responsive">
-                    <!-- Xtt card row -->
-                    <table class="table table-bordered">
+                  <div class="table-responsive">
+                    <table class="table table-striped">
                       <thead>
                         <tr>
-                          <th>#</th>
+                          <th colspan="2">#</th>
                           <th>Message</th>
                           <th>Send by</th>
                           <th>Email</th>
-                          <th>Date</th>
-                          <th class="text-center">######</th>
+                          <th class="text-center">Action</th>
                         </tr>
                       </thead>
-                      
-                      <tbody>
+                      <tbody>           
                       <?php
                         $num = 1;
                         $stmt= $object->readAllMessages();
@@ -53,11 +54,15 @@
                       ?>
                         <tr>
                           <td><?php echo $num; ?></td>
+                          <td class="py-1">
+                            <img src="../images/profile/avatar.png" alt="image"/>
+                          </td>
                           <td><?php echo $object->showShortText25($row['message_content']); ?></td>
-                          <td><?php echo $row['firstname']." ".$row['lastname']; ?></td>
+                          <td><?php echo $row['firstname']." ".$row['lastname']; ?><br><br>
+                            <i><?php echo $row['message_date']; ?></i>
+                          </td>
                           <td title="<?php echo $row['sender_email']; ?>"><?php echo $object->showShortText12($row['sender_email']); ?></td>
-                          <td><?php echo $row['message_date']; ?></td>
-                          <td class="text-center"><a class="btn btn-sm btn-primary" href="../admin/messages?reply=<?php echo $row['message_id']; ?>">Reply</a></td>
+                          <td class="text-center"><a class="btn btn-sm btn-primary" href="../admin/messages?reply=<?php echo $row['message_id']; ?>">View/Reply</a></td>
                         </tr>
                       <?php $num++; } ?>
                       </tbody>
@@ -73,8 +78,17 @@
 
 
           <?php 
-          if(isset($_GET['reply'])) {
 
+          // Removal
+          if(isset($_GET['rem'])) {
+            if($object->removeMessage($_GET['rem'])) {
+              echo'<center><h5 class="btn btn-sm btn-danger text-center">Message has been deleted!</h5></center>';
+              echo "<script>window.location='../admin/messages?dsuccess'</script>";
+            }
+          }
+
+          if(isset($_GET['reply'])) {
+            error_reporting(E_WARNING & E_NOTICE);
             $stmt= $object->readOneMessage($_GET['reply']);
             $result= $stmt->FETCH(PDO::FETCH_ASSOC);
             $message_id= $_GET['reply'];
@@ -95,7 +109,6 @@
               } else {
                 echo'<center><h5 class="btn btn-sm btn-danger text-center">FAILED!</h5></center>';
               }
-              
               echo "<script>window.location='../admin/messages?msuccess'</script>";
             }
           ?>
@@ -123,6 +136,9 @@
                   <form class="forms-sample" method="POST">
                     <div class="form-group">
                       <label for="a_post"><strong>Write reply</strong></label>
+                      &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                    <a href="?rem=<?php echo $result['message_id']; ?>" class="text-danger font-weight-bold">Delete Message</a>
+
                       <input type="hidden" name="sender_email" value="><?php echo $result['sender_email']; ?>">
                       <textarea class="form-control" id="message_reply" rows="5" name="reply_text" required/></textarea>
                     </div>
