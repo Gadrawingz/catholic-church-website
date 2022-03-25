@@ -3,20 +3,36 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="widget">
-                            <h5 class="widgetheading">More about us</h5>
+                            <h5 class="widgetheading">
+                                <?php
+                                $stmt_version= $object->viewLangVersionText('more_about_us');
+                                $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
+                                echo $row_lang[$func->getLangRow($active_lang)];
+                                ?>
+                            </h5>
                             <address>
-                                <strong><?php echo $aboutrow['site_name']; ?></strong><br>
-                                <?php echo $aboutrow['location']; ?>.
+                                <strong><?php echo $aboutrow['site_name']; ?></strong><br><br>
+                                <?php
+                                if(!empty($aboutrow['po_box'])) {
+                                    echo '<i class="fa fa-user"></i> '.$aboutrow['po_box'].'<br>';
+                                }?>
+                                <?php echo '<i class="fa fa-globe"></i> '.$aboutrow['location']; ?>.<br>
                             </address>
                             <p>
-                                <i class="icon-phone"></i> <?php echo $aboutrow['contact_no']; ?> <br>
-                                <i class="icon-envelope-alt"></i> <?php echo $aboutrow['contact_email']; ?>
+                                <i class="fa fa-phone"></i> <?php echo $aboutrow['contact_no']; ?><br>
+                                <i class="fa fa-envelope"></i></i> <?php echo $aboutrow['contact_email']; ?>
                             </p>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <div class="widget">
-                            <h5 class="widgetheading">Quick Links</h5>
+                            <h5 class="widgetheading">
+                                <?php
+                                $stmt_version= $object->viewLangVersionText('quick_links');
+                                $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
+                                echo $row_lang[$func->getLangRow($active_lang)];
+                                ?>
+                            </h5>
                             <ul class="link-list">
                                 <?php
                                 $stmt6= $object->bottomMenus();
@@ -32,10 +48,20 @@
                     
                     <div class="col-lg-6">
                         <div class="widget">
-                            <h5 class="widgetheading">Most viewed stories</h5>
+                            <h5 class="widgetheading">
+                                <?php
+                                $stmt_version= $object->viewLangVersionText('most_viewed_stories');
+                                $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
+                                echo $row_lang[$func->getLangRow($active_lang)];
+                                ?>
+                            </h5>
                             <ul class="link-list">
                                 <?php
-                                $stmt4= $object->readTop5Articles();
+                                if($active_lang=='lang_en') {
+                                    $stmt4= $object->readTop5Articles();
+                                } if($active_lang=='lang_rw') {
+                                    $stmt4= $object->readTop5ArticlesRw();
+                                }
                                 while($rowp=$stmt4->FETCH(PDO::FETCH_ASSOC)) { 
                                 ?>
                                 <li style="text-transform: capitalize!important;"><u><a href="read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></u></li>
@@ -53,7 +79,13 @@
                         <div class="col-lg-6">
                             <div class="copyright">
                                 <p>
-                                    <span>&copy; <?php echo $aboutrow['site_name']; ?> <?php echo date('Y');?> All right reserved.</span>
+                                    <span>&copy; <?php echo $aboutrow['site_name']; ?> <?php echo date('Y');?> 
+                                    <?php
+                                    $stmt_version= $object->viewLangVersionText('all_rights_reserved');
+                                    $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
+                                    echo $row_lang[$func->getLangRow($active_lang)];
+                                    ?>
+                                .</span>
                                 </p>
                             </div>
                         </div>
@@ -77,6 +109,7 @@
     <!-- javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+
     <script src="js/jquery.js"></script>
     <script src="js/jquery.easing.1.3.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -90,7 +123,7 @@
     <script src="js/jquery.magnific-popup.min.js"></script>
     <script src="js/animate.js"></script>
     <script src="js/custom.js"></script>
-    <script src="others/carousel/custom-slides.js"></script>
+    <script src="others/carousel/slideshow.js"></script>
     <script src="others/customix/coolscript.js"></script>
 </body>
 </html>

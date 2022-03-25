@@ -1,10 +1,13 @@
 <?php
-
+session_start();
 include('configs/adminquery.php');
 $object = new AdminQuery;
 
 $stmt= $object->viewWebsiteSetup();
 $aboutrow= $stmt->FETCH(PDO::FETCH_ASSOC);
+
+include('configs/functions.php');
+$func = new Functions;
 
 if(isset($_GET['cmenu_url'])) {
 // Getting special url
@@ -18,14 +21,38 @@ if(isset($_GET['article_id'])) {
 // Getting special url
 $articleid = $_REQUEST['article_id'];
 
-$stmt600= $object->readArticle($articleid);
-$articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
-
+if($_SESSION['active_lang']=='lang_en') {
+    $stmt600= $object->readArticle($articleid);
+} if($_SESSION['active_lang']=='lang_rw') {
+    $stmt600= $object->readArticleRw($articleid);
 }
 
+$articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
+}
+
+// TRANSLATE SHIT
+if(!isset($_SESSION['active_lang'])) {
+    $_SESSION['active_lang'] = "lang_en";
+    $active_lang = $_SESSION['active_lang'];
+} else {
+    $active_lang = $_SESSION['active_lang'];
+}
+
+if(isset($_GET['lang']) && $_GET['lang']=='en') {
+    $_SESSION['active_lang'] = "lang_en";
+    $active_lang = $_SESSION['active_lang'];
+} else if(isset($_GET['lang']) && $_GET['lang']=='rw') {
+    $_SESSION['active_lang'] = "lang_rw";
+    $active_lang = $_SESSION['active_lang'];
+} else if(isset($_GET['lang']) && $_GET['lang']=='fr') {
+    $_SESSION['active_lang'] = "lang_fr";
+    $active_lang = $_SESSION['active_lang'];
+} else {
+    $_SESSION['active_lang'] = $_SESSION['active_lang'];
+    $active_lang = $_SESSION['active_lang'];
+}
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,19 +62,25 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
         <?php
         if(isset($menu_slug)) {
             if(!empty($result['cmenu_name'])) {
-                echo $result['cmenu_name']." - ";
+                if($active_lang=='lang_en') {
+                    echo $result['cmenu_name']." - ";
+                } if($active_lang=='lang_rw') {
+                    echo $result['cmenu_name_rw']." - ";
+                }
             } else {
                 echo "Error - ";
             }
-
-        } else if(isset($articleid)) {
+        } else if(isset($articleid) && $articleid!='0' && $object->check4ArticleExistance($active_lang, $articleid)!=0) {
             echo $articla['article_title']." - ";
-        } ?><?php echo $aboutrow['site_name']; ?>
+        } else {
+            echo "Error - ";
+        }?><?php echo $aboutrow['site_name']; ?>
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
     <meta name="author" content="" />
     <!-- CSS -->
+	 <link rel="shortcut icon" href="../images/profile/logo_black.gif">
     <link href="../css/bootstrap.min.css" rel="stylesheet" />
     <link href="../css/fancybox/jquery.fancybox.css" rel="stylesheet">
     <link href="../css/jcarousel.css" rel="stylesheet" />
@@ -59,16 +92,29 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
     <link href="../css/style.css" rel="stylesheet" />
     <link href="../css/defined.css" rel="stylesheet" />
     <link href="../others/carousel/custom-slides.css" rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet"/>
 
 </head>
 <body style="overflow-x: hidden!important;">
 
 <div id="wrapper">
-<div class="topbar" style="background: orange;">
+<div class="topbar" style="background:#fff;">
   <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <img src="../images/profile/logo.png" style="width: 25%; height: auto;">
+  <div class="row">
+     <div class="col-md-8">	
+        <img src="../images/profile/logo_og.png" style="width: 25%; height:auto;">
+      </div>
+	  <div class="col-md-4 text-right">	
+        <?php if(isset($_SESSION['active_lang']) && isset($_GET['article_id'])){
+        // For good redirection go back to home page with id and language 
+        // and return in a given language @gadrawingz
+        ?>
+        <p style="color:black"> <span class="flag-icon flag-icon-us"></span><a href="../?lang=en&return_art=<?php echo $_GET['article_id']; ?>"> English</a>&nbsp;|&nbsp;<span class="flag-icon flag-icon-rw"></span> <a href="../?lang=rw&return_art=<?php echo $_GET['article_id']; ?>">Kinyarwanda</a></p>
+        <?php } else if(isset($_SESSION['active_lang']) && isset($_GET['cmenu_url'])){ ?>
+        <p style="color:black"> <span class="flag-icon flag-icon-us"></span><a href="../?lang=en&return_page=<?php echo $_GET['cmenu_url']; ?>"> English</a>&nbsp;|&nbsp;<span class="flag-icon flag-icon-rw"></span> <a href="../?lang=rw&return_page=<?php echo $_GET['cmenu_url']; ?>">Kinyarwanda</a></p>
+        <?php } else { ?>
+        <p style="color:black"> <span class="flag-icon flag-icon-us"></span><a href="?lang=en"> English</a>&nbsp;|&nbsp;<span class="flag-icon flag-icon-rw"></span> <a href="?lang=rw">Kinyarwanda</a></p>
+        <?php } ?>
       </div>
     </div>
   </div>
@@ -89,6 +135,7 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                     </div>
                     <div class="navbar-collapse collapse ">
                         <ul class="nav navbar-nav">
+
                         <?php
                         $stmt2= $object->topMenus();
                         
@@ -96,7 +143,15 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                             if($menu['has_submenu']=='Yes') {
                         ?>
                             <li class="dropdown">
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="<?php echo $menu['menu_name']; ?>"><?php echo $menu['menu_name']; ?> <b class="caret"></b></a>
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="<?php echo $menu['menu_name']; ?>">
+                                    <?php
+                                    if($active_lang=='lang_en') {
+                                        echo $menu['menu_name'];
+                                    } if($active_lang=='lang_rw') {
+                                        echo $menu['menu_name_rw'];
+                                    }?>
+                                    <b class="caret"></b>
+                                </a>
                                 <div class="dropdown-menu" <?php if($object->countSubMenus($menu['menu_id'])!=1) {?>style="left: -100px!important;"<?php }?>>
                                     <!-- First level -->
                                     <div class="mega-row" <?php if($object->countSubMenus($menu['menu_id'])==1) {?>style="width: 250px!important;"<?php }?> >
@@ -106,16 +161,39 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                                         while($submenu= $stmt3->FETCH(PDO::FETCH_ASSOC)) {
                                         ?>
                                         <div class="mega-column" <?php if($object->countSubMenus($menu['menu_id'])==1) {?>style="width: 100%!important;"<?php }?> >
-                                            <h4><?php echo $submenu['sub_menu_title']; ?></h4>
+                                            <h4>
+                                                <?php
+                                                if($active_lang=='lang_en') {
+                                                    echo $submenu['sub_menu_title'];
+                                                } if($active_lang=='lang_rw') {
+                                                    echo $submenu['sub_menu_title_rw'];
+                                                }?>
+                                            </h4>
                                             
-                                            <!-- Last level -->
                                             <?php
                                             $stmt4=$object->getContentSubMenus($submenu['sub_menu_id']);
                                             while($csmenu= $stmt4->FETCH(PDO::FETCH_ASSOC)){
-                                            ?>
-                                            <a href="../page/<?php echo $csmenu['cmenu_url']; ?>"><?php echo $csmenu['cmenu_name']; ?></a>
-                                            <?php } ?>
 
+                                                // Translate n show og or featured link
+                                                if($csmenu['link_order']=='Original') {
+                                                    echo '<a href="../page/'.$csmenu['cmenu_url'].'">';
+                                                } else {
+                                                    echo '<a href="'.$csmenu['featured_link'].'">';
+                                                }
+
+
+                                                if($active_lang=='lang_en') {
+                                                    echo $csmenu['cmenu_name'];
+                                                } if($active_lang=='lang_rw') {
+                                                    if(!empty($csmenu['cmenu_name_rw'])) {
+                                                        echo $csmenu['cmenu_name_rw'];
+                                                    } else {
+                                                        echo '<span class="text-warning">'.$csmenu['cmenu_name']."<span>";
+                                                    }
+                                                }
+                                                echo '</a>';
+                                            }
+                                            ?>
                                         </div>
                                         <?php } ?>
                                     </div>
@@ -123,9 +201,27 @@ $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
                             </li>
 
                         <?php } else if($menu['menu_url']=='home') { ?>
-                            <li><a href="../index"><?php echo $menu['menu_name']; ?></a></li>
+                            <li>
+                                <a href="../index">
+                                    <?php
+                                    if($active_lang=='lang_en') {
+                                        echo $menu['menu_name'];
+                                    } if($active_lang=='lang_rw') {
+                                        echo $menu['menu_name_rw'];
+                                    }?>
+                                </a>
+                            </li>
                         <?php } else { ?>
-                            <li class=""><a href="../page/<?php echo $menu['menu_url']; ?>"><?php echo $menu['menu_name']; ?></a></li>
+                            <li class="">
+                                <a href="../page/<?php echo $menu['menu_url']; ?>">
+                                    <?php
+                                    if($active_lang=='lang_en') {
+                                        echo $menu['menu_name'];
+                                    } if($active_lang=='lang_rw') {
+                                        echo $menu['menu_name_rw'];
+                                    }?>
+                                </a>
+                            </li>
                         <?php }} ?>
 
                         </ul>
