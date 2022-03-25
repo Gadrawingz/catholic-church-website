@@ -117,6 +117,7 @@ include('configs/site_header_bk.php');
                         </div>
                     </div>
                 <?php }} ?>
+            </div>
             
 
             <?php if($menu_slug=='contact') { ?>

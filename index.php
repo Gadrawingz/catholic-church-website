@@ -53,9 +53,17 @@
                         </p>
                     </div>
                     <div class="col-md-2 col-sm-3">
-                        <a href="page/prayer" class="btn btn-primary">
                         <?php
-                        $stmt_version= $object->viewLangVersionText('prayer');
+                        // Get specific menu data
+                        $stmt88= $object->getSpecificPageBySlug('prayers');
+                        $Mmenu= $stmt88->FETCH(PDO::FETCH_ASSOC);
+                        if($Mmenu['link_order']=='Original') {
+                            echo '<a href="page/prayers" class="btn btn-primary">';
+                        } else {
+                            echo '<a href="'.$Mmenu['featured_link'].'" class="btn btn-primary">';
+                        }
+
+                        $stmt_version= $object->viewLangVersionText('prayers');
                         $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                         echo $row_lang[$func->getLangRow($active_lang)];
                         ?>
