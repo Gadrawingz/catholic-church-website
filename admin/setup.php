@@ -334,6 +334,112 @@
 
 
 
+
+
+                <?php if(isset($_GET['upd_enc'])) { ?>
+                  <h3>Update Encouragement &nbsp;&nbsp;&nbsp;&nbsp;</h3><br>
+
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                    <?php
+                    if(isset($_POST['upd_enc_large'])) {
+                      if($object->updateEcouragementByKeyword('enc_large', $_POST['kwd_english'], $_POST['kwd_kinya'])) {
+                        echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?upd_enc'</script>";
+                      } else {
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
+                      }
+                    }?>
+                    <div class="form-group">
+                      <label for="enc_large">Encouragement Body Text</label>
+                      <textarea class="form-control" id="description" rows="4" name="kwd_english"><?php $stmtV= $object->viewLangVersionText('enc_large'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_english']; ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="description">Encouragement Body Text || <b>Kinyarwanda</b></label>
+                      <textarea class="form-control" id="description" rows="4" name="kwd_kinya"><?php $stmtV= $object->viewLangVersionText('enc_large'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_kinya']; ?></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" name="upd_enc_large">Save Changes</button>
+                  </form>
+
+                  
+
+                  <hr style="background-color: cadetblue; height: 5px;">
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                    <?php
+                    if(isset($_POST['upd_enc_text_1'])) {
+                      if($object->updateEcouragementByKeyword('enc_text_1', $_POST['kwd_english'], $_POST['kwd_kinya'])) {
+                        echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?upd_enc'</script>";
+                      } else {
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
+                      }
+                    }?>
+                    <div class="form-group">
+                      <label for="video_full">Encouragement Sub Text(1)</label>
+                      <input type="text" class="form-control" id="video_full" name="kwd_english" value="<?php $stmtV= $object->viewLangVersionText('enc_text_1'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_english']; ?>" required/>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="video_full">Encouragement Sub Text(1) || <b>Kinyarwanda</b></label>
+                      <input type="text" class="form-control" id="video_full" name="kwd_kinya" value="<?php $stmtV= $object->viewLangVersionText('enc_text_1'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_kinya']; ?>" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" name="upd_enc_text_1">Save Changes</button>
+                  </form>
+
+
+
+                  <hr style="background-color: cadetblue; height: 5px;">
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                    <?php
+                    if(isset($_POST['upd_enc_text_2'])) {
+                      if($object->updateEcouragementByKeyword('enc_text_2', $_POST['kwd_english'], $_POST['kwd_kinya'])) {
+                        echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?upd_enc'</script>";
+                      } else {
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
+                      }
+                    }?>
+                    <div class="form-group">
+                      <label for="">Encouragement Sub Text(2)</label>
+                      <input type="text" class="form-control" id="" name="kwd_english" value="<?php $stmtV= $object->viewLangVersionText('enc_text_2'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_english']; ?>" required/>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="">Encouragement Sub Text(2) || <b>Kinyarwanda</b></label>
+                      <input type="text" class="form-control" id="" name="kwd_kinya" value="<?php $stmtV= $object->viewLangVersionText('enc_text_2'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_kinya']; ?>" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" name="upd_enc_text_2">Save Changes</button>
+                  </form>
+
+
+                  <hr style="background-color: cadetblue; height: 5px;">
+                  <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                    <?php
+                    if(isset($_POST['upd_enc_text_3'])) {
+                      if($object->updateEcouragementByKeyword('enc_text_3', $_POST['kwd_english'], $_POST['kwd_kinya'])) {
+                        echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
+                        echo "<script>window.location='?upd_enc'</script>";
+                      } else {
+                        echo'<center><h5 class="btn btn-sm btn-danger text-center">Action has failed!</h5></center>';
+                      }
+                    }?>
+                    <div class="form-group">
+                      <label for="">Encouragement Sub Text(3)</label>
+                      <input type="text" class="form-control" id="" name="kwd_english" value="<?php $stmtV= $object->viewLangVersionText('enc_text_3'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_english']; ?>" required/>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="video_full">Encouragement Sub Text(3) || <b>Kinyarwanda</b></label>
+                      <input type="text" class="form-control" id="video_full" name="kwd_kinya" value="<?php $stmtV= $object->viewLangVersionText('enc_text_3'); $Lrow= $stmtV->FETCH(PDO::FETCH_ASSOC); echo $Lrow['kwd_kinya']; ?>" required/>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm" name="upd_enc_text_3">Save Changes</button>
+                  </form>
+                <?php } ?>
+
+
+
+
                 </div>
               </div>
             </div>

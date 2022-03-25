@@ -373,7 +373,7 @@
                   <h3 class="card-title">Preview and Update this page </h3>
                   <?php
                   if(isset($_POST['p_title_update'])) {
-                    if($object->updateSubMenuTitle($_GET['preview'], $_POST['cmenu_title'],  $_POST['cmenu_title_rw'])) {
+                    if($object->updateSubMenuTitleAndLinks($_GET['preview'], $_POST['cmenu_title'],  $_POST['cmenu_title_rw'], $_POST['featured_link'],  $_POST['link_order'])) {
                       echo'<center><h5 class="btn btn-sm btn-success text-center">Updating is successful!</h5></center>';
                       echo "<script>window.location='?allmenus'</script>";
                     } else {
@@ -395,6 +395,23 @@
                         <label for="cmenu_title_rw">Content title /<span class="text-primary">Kinyarwanda</span></label>
                         <input type="text" class="form-control" id="cmenu_title_rw" name="cmenu_title_rw" value="<?php echo $prevrow['cmenu_name_rw']; ?>" required/>
                       </div>
+
+                      <hr style="background-color: blue; height: 8px;">
+
+                      <div class="form-group">
+                        <label for="featured_link" class="font-weight-bold">Add featured link (msola.org site reference)<span class="text-primary"></span></label>
+                        <input type="text" class="form-control" id="featured_link" name="featured_link" value="<?php echo $prevrow['featured_link']; ?>" required/>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="featured_link" class="font-weight-bold">Select page (website link to show)<span class="text-primary"></span></label>
+                        <select class="form-control" name="link_order" required>
+                          <option value="<?php echo $prevrow['link_order']; ?>"><?php echo $prevrow['link_order']; if($prevrow['link_order']=='Featured') { echo " (From another site)"; } else { echo " (From this site)"; } ?></option>
+                          <option value="Featured">Featured (From another site)</option>
+                          <option value="Original">Original (From this website)</option>
+                        </select>
+                      </div>
+
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary mr-2" name="p_title_update">Update</button>
                   </form><br><br>
