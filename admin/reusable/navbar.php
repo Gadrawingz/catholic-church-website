@@ -52,7 +52,7 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
     -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-      <a href="../" target="_blank"><img src="../images/profile/logo.png" style="width: 100%; height: auto; padding: 8px;"></a>
+      <a href="../" target="_blank"><img src="../images/profile/logocover.png" style="width: 100%; height: auto; padding: 8px;"></a>
         
       </div>
 
@@ -73,7 +73,17 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
           </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
-          
+          <li class="nav-item dropdown mr-1">
+            <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="../admin/messages">
+              <i class="ti-email mx-0"></i>
+            </a>  
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="settingsDropdown" href="../admin/settings?setup">
+              <i class="ti-settings mx-0"></i>
+              <span class="count"></span>
+            </a>
+          </li>          
           &nbsp;&nbsp;
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
@@ -149,27 +159,39 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
 
           <?php if(($_SESSION['admin_role']=='Admin')) { ?>
           <li class="nav-item">
-            <a class="nav-link" href="../admin/settings?socials">
-              <i class="ti-twitter menu-icon"></i>
-              <span class="menu-title">Social media</span>
-            </a>
-          </li>
-          
-
-          <li class="nav-item">
-            <a class="nav-link" href="../admin/settings?setup">
+            <a class="nav-link" data-toggle="collapse" href="#settings" aria-expanded="false" aria-controls="settings">
               <i class="ti-settings menu-icon"></i>
-              <span class="menu-title">Setup website</span>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="../admin/setup?allslides">
-              <i class="ti-book menu-icon"></i>
-              <span class="menu-title">Manage pages</span>
+              <span class="menu-title">Settings</span>
               <i class="menu-arrow"></i>
             </a>
+
+            <div class="collapse" id="settings">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../admin/pages?allmenus">Manage Pages</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../admin/setup?upd_enc">Encouragement</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../admin/setup?allslides">Manage Slides</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../admin/settings?setup">Setup Website</a></li>
+              </ul>
+            </div>
           </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#page-more" aria-expanded="false" aria-controls="page-more">
+              <i class="ti-layers-alt menu-icon"></i>
+              <span class="menu-title">Manage +</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="page-more">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../admin/socials">Social Media</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../admin/setup?all_vid">Youtube Videos</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../admin/pages_more?page_to=stats">Website Traffic</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../">Go to Website</a></li>
+              </ul>
+            </div>
+          </li>
+          
+      
           <?php } ?>
 
           <li class="nav-item">
