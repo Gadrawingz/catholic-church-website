@@ -46,7 +46,8 @@
                       <thead>
                         <tr>
                           <th>Slide / Description</th>
-                          <th class="text-center">Picture</th>
+                          <th class="text-center">Picture of maximum size</th>
+                          <th class="text-center">Picture of minimum size</th>
                           <th class="text-center">Settings</th>
                         </tr>
                       </thead>
@@ -68,7 +69,10 @@
                           </td>
 
                           <td class="text-center">
-                            <img src="../uploads/slides/<?php echo $row['slide_image']; ?>" style="width: 100px; height: 100px;">
+                            <img src="../uploads/slides/<?php echo $row['slide_image_max']; ?>" style="width: 100px; height: 100px;">
+                          </td>
+                          <td class="text-center">							 
+                            <img src="../uploads/slidesmin/<?php echo $row['slide_image_min']; ?>" style="width: 100px; height: 100px;">
                           </td>
                           <td class="text-center"><a class="btn btn-sm btn-primary" href="?upslide=<?php echo $row['slide_id']; ?>">Replace</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')" href="?rem_slide=<?php echo $row['slide_id']; ?>"><i class="ti-trash" title="Edit"></i></a></td>
                         </tr>
@@ -84,7 +88,7 @@
 
                   <?php
                     if(isset($_POST['slidesave'])) {
-                      if($object->addSlide($_POST['slide_title'], $_POST['description'], $_FILES['slide_picture'])) {
+                      if($object->addSlide($_POST['slide_title'], $_POST['description'], $_FILES['slide_picture_max'],$_FILES['slide_picture_min'])) {
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
                         echo "<script>window.location='?allslides'</script>";
                       } else {
@@ -106,8 +110,13 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="slide_picture">Slide picture</label>
-                      <input type="file" class="form-control" id="slide_picture" name="slide_picture" placeholder="Slide picture"/>
+                      <label for="slide_picture">Slide picture{File size(960*360)}</label>
+                      <input type="file" class="form-control" id="slide_picture_max" name="slide_picture_max" placeholder="Slide picture maximum"/>
+                    </div>
+					
+					   <div class="form-group">
+                      <label for="slide_picture">Slide picture{File size(128*36)}</label>
+                      <input type="file" class="form-control" id="slide_picture_min" name="slide_picture_min" placeholder="Slide picture minimum"/>
                     </div>
 
                     <button type="submit" class="btn btn-primary mr-2" name="slidesave">Save</button>
@@ -132,7 +141,7 @@
                   $stmt80= $object->viewOneSlide($_GET['upslide']);
                   $editrow = $stmt80->FETCH(PDO::FETCH_ASSOC);
                     if(isset($_POST['slideupdatebtn'])) {
-                      if($object->updateSlide($_GET['upslide'], $_POST['slide_title'], $_POST['description'], $_FILES['slide_picture'])) {
+                      if($object->updateSlide($_GET['upslide'], $_POST['slide_title'], $_POST['description'], $_FILES['slide_picture_max'], $_FILES['slide_picture_min'])) {
                         echo'<center><h5 class="btn btn-sm btn-success text-center">Successful!</h5></center>';
                         echo "<script>window.location='?allslides'</script>";
                       } else {
@@ -144,7 +153,7 @@
                     <?php if(isset($_GET['view_pic'])) { ?>
                     <div class="form-group">
                       <div>
-                        <img style="border: 1.5px solid green; width: 50%!important; opacity: 40%!important;" src="../uploads/slides/<?php echo $editrow['slide_image']; ?>">
+                        <img style="border: 1.5px solid green; width: 50%!important;" src="../uploads/slides/<?php echo $editrow['slide_image_max']; ?>">
                       </div>
                     </div>
                     <?php } ?>
@@ -160,8 +169,13 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="slide_picture">Slide picture</label>
-                      <input type="file" class="form-control" id="slide_picture" name="slide_picture" required />
+                      <label for="slide_picture">Slide picture(image size:960X360)</label>
+                      <input type="file" class="form-control" id="slide_picture_max" name="slide_picture_max" required />
+                    </div>
+					
+                    <div class="form-group">
+                      <label for="slide_picture">Slide picture(image size:128X48)</label>
+                      <input type="file" class="form-control" id="slide_picture_min" name="slide_picture_min" required />
                     </div>
 
                     <button type="submit" class="btn btn-primary mr-2" name="slideupdatebtn">Update</button>

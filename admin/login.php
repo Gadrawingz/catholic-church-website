@@ -57,7 +57,7 @@ if(isset($_POST['login'])) {
           <div class="col-lg-4 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
               <div class="brand-logo">
-                <img src="../images/profile/logo_back.png" alt="logo" style="width: 100%;">
+                <img src="../images/profile/logocover.png" alt="logo" style="width: 100%;">
               </div>
               <h3>Sign in to continue!</h3>
               <form class="pt-3" method="POST">

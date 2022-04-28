@@ -2,7 +2,7 @@
 <?php include('reusable/navbar.php'); ?>
       <!-- 
         @Gadrawingz 
-        Coding hand by https://github.com/Gadrawingz 
+        Coding pen by https://github.com/Gadrawingz 
       -->
       <div class="main-panel">          
         <div class="content-wrapper">
@@ -125,7 +125,15 @@
                                         padding: 3px 5px!important;"
                                         onclick="return confirm('Are you sure you want to delete this page?')">
                                         <i class="ti-trash"></i></a>&nbsp;&nbsp;
-                                        <a href="?preview=<?php echo $csmenu['cmenu_id']; ?>"><?php echo $csmenu['cmenu_name']; ?></a>
+                                        <a href="?preview=<?php echo $csmenu['cmenu_id']; ?>"><?php echo $csmenu['cmenu_name']; ?>
+
+                                        <i class='ti ti-eye'></i>
+                                        <?php
+                                        $stmtViews=$object->getSpecificPageBySlug($csmenu['cmenu_url']);
+                                        $vrow= $stmtViews->FETCH(PDO::FETCH_ASSOC);
+                                          echo $vrow['views'];
+                                        ?>
+                                        </a>
                                         <?php
                                         if($object->check4TabbedContent($csmenu['cmenu_id'])) {
                                           echo "<span class='text-black'><b> | This page has tabs</b></span>";
@@ -384,6 +392,13 @@
                   if($prevrow['page_type']=='Untabbed' || $prevrow['page_type']=='Single'){ ?>
                   <!-- Caring about content titles -->
                   <?php if(!isset($_GET['ct_lang'])) { ?>
+
+                  <div class="text-left">
+                    <a class="btn-sm btn-primary" href="?preview=<?php echo $_GET['preview']."&ct_lang=ct_en"; ?>">View English Content</a>&nbsp;|&nbsp;
+                    <a class="btn-sm btn-primary" href="?preview=<?php echo $_GET['preview']."&ct_lang=ct_rw"; ?>">View Kinyarwanda Content</a>&nbsp;|&nbsp;
+                    <a class="btn-sm btn-success" href="pages_more?p_related=<?php echo $_GET['preview']; ?>">Add Related Page</a>   
+                  </div><br><br>
+
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
                     <div style="border-left: 2px solid blue!important; margin-right: 4px!important;">
                       <div class="form-group">
@@ -400,7 +415,7 @@
 
                       <div class="form-group">
                         <label for="featured_link" class="font-weight-bold">Add featured link (msola.org site reference)<span class="text-primary"></span></label>
-                        <input type="text" class="form-control" id="featured_link" name="featured_link" value="<?php echo $prevrow['featured_link']; ?>" required/>
+                        <input type="text" class="form-control" id="featured_link" name="featured_link" value="<?php echo $prevrow['featured_link']; ?>"/>
                       </div>
 
                       <div class="form-group">
@@ -414,11 +429,7 @@
 
                     </div>
                     <button type="submit" class="btn btn-sm btn-primary mr-2" name="p_title_update">Update</button>
-                  </form><br><br>
-                  <div class="text-left">
-                    <a href="?preview=<?php echo $_GET['preview']."&ct_lang=ct_en"; ?>">View English Content</a>&nbsp;|&nbsp;
-                    <a href="?preview=<?php echo $_GET['preview']."&ct_lang=ct_rw"; ?>">View Kinyarwanda Content</a>  
-                  </div>
+                  </form>
                   <?php } ?>
 
                   <!-- Caring about content versions -->
