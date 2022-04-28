@@ -1,44 +1,53 @@
-        <footer>
-            <div class="container">
+            <section class="section-padding black-bg">
+              <div>
                 <div class="row">
                     <div class="col-lg-3">
-                        <div class="widget">
-                            <h5 class="widgetheading">
+                        <div>
+                            <h3 class="h3-justified">
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('more_about_us');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
-                            </h5>
-                            <address>
-                                <strong><?php echo $aboutrow['site_name']; ?></strong><br><br>
-                                <?php
-                                if(!empty($aboutrow['po_box'])) {
+                            </h3>
+
+                            <div class="widget">
+                                <address>
+                                    <strong>
+                                       <?php echo $aboutrow['site_name']; ?> 
+                                    </strong><br>
+                                    
+                                    <?php
+                                    if(!empty($aboutrow['po_box'])) {
                                     echo '<i class="fa fa-user"></i> '.$aboutrow['po_box'].'<br>';
-                                }?>
-                                <?php echo '<i class="fa fa-globe"></i> '.$aboutrow['location']; ?>.<br>
-                            </address>
-                            <p>
-                                <i class="fa fa-phone"></i> <?php echo $aboutrow['contact_no']; ?><br>
-                                <i class="fa fa-envelope"></i></i> <?php echo $aboutrow['contact_email']; ?>
-                            </p>
+                                    } ?>
+                                    <?php echo '<i class="fa fa-globe"></i> '.$aboutrow['location']; ?>.<br>
+                                </address>
+                                <p>
+                                    <span style="font-size: 11.5px;">
+                                        <i class="fa fa-phone"></i> <?php echo $aboutrow['contact_no']; ?>
+                                    </span><br>
+                                    <i class="fa fa-envelope"></i></i> <?php echo $aboutrow['contact_email']; ?>
+                                </p>
+                            </div>
                         </div>
                     </div>
+
                     <div class="col-lg-3">
-                        <div class="widget">
-                            <h5 class="widgetheading">
+                        <div>
+                            <h3 class="h3-justified">
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('quick_links');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
-                            </h5>
+                            </h3>
                             <ul class="link-list">
                                 <?php
                                 $stmt6= $object->bottomMenus();
                                 while($menu= $stmt6->FETCH(PDO::FETCH_ASSOC)) { 
                                 ?>
-                                <li><a href="page/<?php echo $menu['menu_url'];?>"><?php echo $menu['menu_name'];?></a></li>
+                                <li><a class="bottom-link" href="page/<?php echo $menu['menu_url'];?>"><?php echo $menu['menu_name'];?></a></li>
                                 <?php if($menu['menu_url']=='home') { ?>
                                     <li><a href="index">Homepage</a></li>
                                 <?php }} ?>
@@ -47,14 +56,15 @@
                     </div>
                     
                     <div class="col-lg-6">
-                        <div class="widget">
-                            <h5 class="widgetheading">
+                        <p>
+                            <h3 class="text-center h3-justified">
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('most_viewed_stories');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
-                            </h5>
+                            </h3>
+                            
                             <ul class="link-list">
                                 <?php
                                 if($active_lang=='lang_en') {
@@ -64,19 +74,16 @@
                                 }
                                 while($rowp=$stmt4->FETCH(PDO::FETCH_ASSOC)) { 
                                 ?>
-                                <li style="text-transform: capitalize!important;"><u><a href="read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></u></li>
+                                <li style="text-transform: capitalize!important;"><a class="bottom-link" href="read/<?php echo $rowp['article_id'];?>"><?php echo ucwords(strtolower($rowp['article_title'])); ?></a></li>
                                 <?php } ?>
                             </ul>
-                        </div>
+                        </p>
                     </div>
-                </div>
-                
-            </div>
+                </div>        
             
-            <div id="sub-footer">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
+                <br><br><br>
+                <div class="row">
+                        <div class="col-lg-6">                      
                             <div class="copyright">
                                 <p>
                                     <span>&copy; <?php echo $aboutrow['site_name']; ?> <?php echo date('Y');?> 
@@ -85,13 +92,12 @@
                                     $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                     echo $row_lang[$func->getLangRow($active_lang)];
                                     ?>
-                                .</span>
+                                </span>
                                 </p>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 text-right">
                             <ul class="social-network">
-
                                 <?php
                                 $stmt= $object->viewSocials();
                                 while($result= $stmt->FETCH(PDO::FETCH_ASSOC)) {
@@ -100,18 +106,16 @@
                                 <?php } ?>
                             </ul>
                         </div>
-                    </div>
-                </div>
+                    </div>             
             </div>
-        </footer>
+            
+          </section>
     </div>
     <a href="#" class="scrollup"><i class="fa fa-angle-up active"></i></a>
     <!-- javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery.easing.1.3.js"></script>
+ 
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.fancybox.pack.js"></script>
     <script src="js/jquery.fancybox-media.js"></script>
@@ -121,9 +125,11 @@
     <script src="js/modernizr.custom.js"></script>
     <script src="js/jquery.isotope.min.js"></script>
     <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/animate.js"></script>
+   
     <script src="js/custom.js"></script>
-    <script src="others/carousel/slideshow.js"></script>
     <script src="others/customix/coolscript.js"></script>
+    <script type="text/javascript" src="engine1/wowslider.js"></script>
+    <script type="text/javascript" src="engine1/script.js"></script>
+
 </body>
 </html>

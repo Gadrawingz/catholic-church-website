@@ -98,7 +98,7 @@ class AdminQuery extends DbConnection {
         $stmt=$this->con->prepare("SELECT COUNT(*) FROM article WHERE article_title='$title' ");
         $stmt->execute(); 
         if($stmt->fetchColumn()==0) { 
-            $qry= "INSERT INTO `article`(`article_title`, `article_image`, `publisher_id`, `article_category`, `article_post`) VALUES ('$title', '$name', '$admin', '$category', '".addslashes($a_post)."')";
+            $qry= "INSERT INTO `article`(`article_title`, `article_image`, `publisher_id`, `article_category`, `article_post`) VALUES ('".$title."', '$name', '$admin', '$category', '".addslashes($a_post)."')";
 
             if(is_uploaded_file($temp)) {
                 move_uploaded_file($temp, "../uploads/posts/".$name);
@@ -261,6 +261,44 @@ class AdminQuery extends DbConnection {
         $stmt=$this->con->prepare("SELECT * FROM $table ORDER BY article_date DESC LIMIT 3");
         $stmt->execute();
         return $stmt;
+    }
+
+    public function readPopularArticles($lang) {
+        if($lang=='lang_en') {
+            $table_a = "article";
+            $table_v = "viewsbox";
+        } if($lang=='lang_rw') {
+            $table_a = "article_rw";
+            $table_v = "viewsbox_rw";
+        }
+
+        // Sophisticated Query based on Gadrawingz @gadrawingz logic spec
+        $sql = "SELECT DISTINCT *, COUNT(vw.post_id) AS views FROM $table_a art LEFT JOIN $table_v vw ON vw.post_id=art.article_id GROUP BY vw.post_id ORDER BY views DESC LIMIT 8";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function readPopularArticlesLimit15($lang) {
+        if($lang=='lang_en') {
+            $table_a = "article";
+            $table_v = "viewsbox";
+        } if($lang=='lang_rw') {
+            $table_a = "article_rw";
+            $table_v = "viewsbox_rw";
+        }
+        // Sophisticated Query based on Gadrawingz @gadrawingz logic spec
+        $sql = "SELECT DISTINCT *, COUNT(vw.post_id) AS views FROM $table_a art LEFT JOIN $table_v vw ON vw.post_id=art.article_id GROUP BY vw.post_id ORDER BY views DESC LIMIT 15";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // Not prepared
+    public function readArticlesByAuthor($id) {
+        $sql = "SELECT cou(*) FROM article WHERE publisher_id='$admin_id' ";
+        $count = $this->con->query($sql)->fetchColumn();
+        return $count;
     }
 
     public function readTop5Articles() {
@@ -508,18 +546,27 @@ class AdminQuery extends DbConnection {
 
 
     // Slides
-    public function addSlide($title, $description, $picture) {
+    public function addSlide($title, $description, $picture_max, $picture_min) {
         $stmt=$this->con->prepare("SELECT COUNT(*) FROM slide WHERE slide_title='$title' ");
         $stmt->execute(); 
         if($stmt->fetchColumn()==0) { 
-            $name = $picture['name'];
-            $temp = $picture['tmp_name'];
-            $finalname = "slide-".$name;
-            $sql= "INSERT INTO `slide`(`slide_title`, `description`, `slide_image`) VALUES ('$title', '".addslashes($description)."', '$finalname')";
+            $namemax = $picture_max['name'];
+            $tempmax = $picture_max['tmp_name'];
+            $finalnamemax = "slide-".$namemax;
+			
+			$namemin = $picture_min['name'];
+            $tempmin = $picture_min['tmp_name'];
+            $finalnamemin = "slide-".$namemin;
+			
+			
+            $sql= "INSERT INTO `slide`(`slide_title`, `description`, `slide_image_max`,`slide_image_min`)
+			VALUES ('$title', '".addslashes($description)."', '$finalnamemax','$finalnamemin')";
 
-            if(is_uploaded_file($temp)) {
-                move_uploaded_file($temp, "../uploads/slides/".$finalname);
-            }
+            if(is_uploaded_file($tempmax) && is_uploaded_file($tempmin)) {
+				 move_uploaded_file($tempmin, "../uploads/slidesmin/".$finalnamemin);
+                 move_uploaded_file($tempmax, "../uploads/slides/".$finalnamemax);			
+            }			
+		
 
             $query= $this->con->prepare($sql);
             $query->execute();
@@ -530,26 +577,32 @@ class AdminQuery extends DbConnection {
         } 
     }
 
-    public function updateSlide($id, $title, $description, $picture) {
-        $stmt=$this->con->prepare("SELECT COUNT(*) FROM slide WHERE slide_title='$title' ");
+    public function updateSlide($id,$title,$description,$picturemax,$picturemin) {
+        $stmt=$this->con->prepare("SELECT COUNT(*) FROM slide WHERE slide_title='$title'");
         $stmt->execute(); 
         if($stmt->fetchColumn()==0) { 
-            $name = $picture['name'];
-            $temp = $picture['tmp_name'];
-            $finalname = "slide-".$name;
+            $namemax = $picturemax['name'];
+            $tempmax = $picturemax['tmp_name'];
+            $finalnamemax = "slide-".$namemax;
 
-            $sql= "UPDATE `slide` SET `slide_title`='$title', `description`='".addslashes($description)."', `slide_image`='$finalname' WHERE slide_id='$id' ";
+			$namemin = $picturemin['name'];
+            $tempmin = $picturemin['tmp_name'];
+            $finalnamemin = "slide-".$namemin;
 
-            if(is_uploaded_file($temp)) {
-                move_uploaded_file($temp, "../uploads/slides/".$finalname);
+            $sql= "UPDATE `slide` SET `slide_title`='$title', `description`='".addslashes($description)."', `slide_image_max`='$finalnamemax',`slide_image_min`='$finalnamemin' WHERE slide_id='$id' ";
+
+            if(is_uploaded_file($tempmax) && is_uploaded_file($tempmin)) {
+                move_uploaded_file($tempmax, "../uploads/slides/".$finalnamemax);
+                move_uploaded_file($tempmin, "../uploads/slidesmin/".$finalnamemin);
             }
 
             // Remove shit
-            $stmtZ=$this->con->prepare("SELECT slide_image FROM slide WHERE slide_id=? ");
+            $stmtZ=$this->con->prepare("SELECT slide_image_max, slide_image_min FROM slide WHERE slide_id=? ");
             $stmtZ->execute([$id]);
             $returnedRow = $stmtZ->fetch(PDO::FETCH_ASSOC);
 
-            unlink("../uploads/slides/".$returnedRow['slide_image']);
+            unlink("../uploads/slides/".$returnedRow['slide_image_max']);
+            unlink("../uploads/slidesmin/".$returnedRow['slide_image_min']);
 
             $query= $this->con->prepare($sql);
             $query->execute();
@@ -564,10 +617,11 @@ class AdminQuery extends DbConnection {
         $sql= "DELETE FROM slide WHERE slide_id='$id' ";
 
         // Remove shit
-        $stmtZ=$this->con->prepare("SELECT slide_image FROM slide WHERE slide_id=? ");
+        $stmtZ=$this->con->prepare("SELECT slide_image_max,slide_image_min FROM slide WHERE slide_id=? ");
         $stmtZ->execute([$id]);
         $returnedRow = $stmtZ->fetch(PDO::FETCH_ASSOC);
-        unlink("../uploads/slides/".$returnedRow['slide_image']);
+        unlink("../uploads/slides/".$returnedRow['slide_image_max']);
+        unlink("../uploads/slidesmin/".$returnedRow['slide_image_min']);
 
         $stmt=$this->con->prepare($sql);
         $stmt->execute();
@@ -840,7 +894,7 @@ class AdminQuery extends DbConnection {
     }
 
 
-    // Sub menus
+    // Sub menus by cmenu_id (Primary key considered)
     public function getSubMenuData($id) {
         $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE cmenu_id='$id'");
         $stmt->execute();
@@ -869,13 +923,14 @@ class AdminQuery extends DbConnection {
     }
 
 
-    // Get sub-sub menus
+    // Get sub-sub menus by sub-menu-id
     public function getContentSubMenus($submenu) {
         $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE sub_menu_id='$submenu' ");
         $stmt->execute();
         return $stmt;
     }
 
+    // BY MENU ID::
     public function getContentSubMenusByMenu($menu) {
         $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE menu_id='$menu' ");
         $stmt->execute();
@@ -883,7 +938,7 @@ class AdminQuery extends DbConnection {
     }
 
     public function getSpecificPageBySlug($slug) {
-        $stmt=$this->con->prepare("SELECT * FROM menu_sub_sub WHERE cmenu_url='$slug' ");
+        $stmt=$this->con->prepare("SELECT DISTINCT *, COUNT(vw.page_id) AS views FROM menu_sub_sub pg LEFT JOIN views_pages vw ON vw.page_id=pg.cmenu_id WHERE cmenu_url='$slug' ");
         $stmt->execute();
         return $stmt;
     }
@@ -907,8 +962,67 @@ class AdminQuery extends DbConnection {
         $sql1 = "SELECT COUNT(*) FROM $views_table WHERE post_id='$post_id' AND viewer_ip='$ip'";
         $stmt = $this->con->prepare($sql1);
         $stmt->execute();
-        if($stmt->fetchColumn()<'1') {
-            $query ="INSERT INTO $views_table (`post_id`, `viewer_ip`, `date_viewed`) VALUES('$post_id', '$ip', NOW())";
+        // @gadrawingz avoiding localhost damn ip address
+        if($stmt->fetchColumn()<'1' && $ip!='' && $ip!='::1') {
+            error_reporting(0);
+            $url = "http://ip-get-geolocation.com/api/json/$ip";
+            $locArr1 = json_decode(file_get_contents($url), true);
+
+            $query ="INSERT INTO $views_table (`post_id`, `viewer_ip`, `country`, `city`) VALUES ('$post_id', '$ip', '".addslashes($locArr1['country'])."', '".addslashes($locArr1['city'])."')";
+
+            $query = $this->con->prepare($query);
+            $query->execute();
+            $count = $query->rowCount();
+            return $count;
+        }
+    }
+
+    public function createPageView($lang, $post_id, $ip) {
+
+        if($lang=='lang_en') {
+            $views_table = "views_pages";
+        } if($lang=='lang_rw') {
+            $views_table = "views_pages";
+        }
+        // check for unique ip
+        $sql1 = "SELECT COUNT(*) FROM $views_table WHERE page_id='$post_id' AND viewer_ip='$ip'";
+        $stmt = $this->con->prepare($sql1);
+        $stmt->execute();
+        // @gadrawingz execution
+        // @gadrawingz avoiding localhost damn ip address
+        if($stmt->fetchColumn()<'1' && $ip!='' && $ip!='::1') {
+            error_reporting(0);
+            $url2 = "http://ip-get-geolocation.com/api/json/$ip";
+            $locArr2 = json_decode(file_get_contents($url2), true);
+
+            $query ="INSERT INTO $views_table (`page_id`, `viewer_ip`, `country`, `city`) VALUES ('$post_id', '$ip', '".addslashes($locArr2['country'])."', '".addslashes($locArr2['city'])."')";
+            $query = $this->con->prepare($query);
+            $query->execute();
+            $count = $query->rowCount();
+            return $count;
+        }
+    }
+
+
+    public function createSubPageView($lang, $page_id, $ip) {
+
+        if($lang=='lang_en') {
+            $views_table = "views_subpage";
+        } if($lang=='lang_rw') {
+            $views_table = "views_subpage";
+        }
+        // check for unique ip
+        $sql1 = "SELECT COUNT(*) FROM $views_table WHERE page_id='$page_id' AND viewer_ip='$ip'";
+        $stmt = $this->con->prepare($sql1);
+        $stmt->execute();
+        // @gadrawingz avoiding localhost damn ip address
+        if($stmt->fetchColumn()<'1' && $ip!='' && $ip!='::1') {
+            error_reporting(0);
+            $url3 = "http://ip-get-geolocation.com/api/json/$ip";
+            $locArr3 = json_decode(file_get_contents($url3), true);
+
+            $query ="INSERT INTO $views_table (`page_id`, `viewer_ip`, `country`, `city`) VALUES ('$page_id', '$ip', '".addslashes($locArr3['country'])."', '".addslashes($locArr3['city'])."')";
+
             $query = $this->con->prepare($query);
             $query->execute();
             $count = $query->rowCount();
@@ -962,6 +1076,113 @@ class AdminQuery extends DbConnection {
         $sql="SELECT COUNT(kwd_text) FROM keywords WHERE kwd_text='$text'";
         $count = $this->con->query($sql)->fetchColumn();
         return $count;
+    }
+
+
+
+    // Recent Queries
+    public function addRelatedPage($page_ref, $title_en, $title_rw, $ct_en, $ct_rw) {
+        $stmt=$this->con->prepare("SELECT COUNT(*) FROM related_pages WHERE content_title_en='$title_en' ");
+        $stmt->execute(); 
+        if($stmt->fetchColumn()==0) {
+
+            $sql= "INSERT INTO `related_pages`(`page_ref`, `content_title_en`, `content_title_rw`, `content_text_en`, `content_text_rw`) VALUES ('".$page_ref."', '".addslashes($title_en)."', '".addslashes($title_rw)."', '".addslashes($ct_en)."', '".addslashes($ct_rw)."')";
+            $query= $this->con->prepare($sql);
+            $query->execute();
+            $count= $query->rowCount();
+            return $count;
+        }
+    }
+
+    public function updateRelatedPage($id, $title_en, $title_rw, $ct_en, $ct_rw) {
+        $qry= "UPDATE `related_pages` SET `content_title_en`='".addslashes($title_en)."', `content_title_rw`='".addslashes($title_rw)."', `content_text_en`='".addslashes($ct_en)."', `content_text_rw`='".addslashes($ct_rw)."' WHERE page_id='".$id."' ";
+        $query= $this->con->prepare($qry);
+        $query->execute();
+        $count= $query->rowCount();
+        return $count;
+    }
+
+    public function viewRelatedPages($id) {
+        $stmt=$this->con->prepare("SELECT * FROM related_pages WHERE page_ref='$id' ORDER BY created_at DESC LIMIT 30 ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function view8TopRelatedPages($id) {
+        $stmt=$this->con->prepare("SELECT * FROM related_pages WHERE page_ref='$id' ORDER BY created_at DESC LIMIT 8 ");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function readPopularPages() {
+        $sql = "SELECT DISTINCT *, COUNT(vw.page_id) AS views FROM menu_sub_sub pg LEFT JOIN views_pages vw ON vw.page_id=pg.cmenu_id GROUP BY vw.page_id ORDER BY views DESC LIMIT 15";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function readPopularSubPages() {
+        $sql = "SELECT DISTINCT *, COUNT(vw.page_id) AS views FROM related_pages pg LEFT JOIN views_subpage vw ON vw.page_id=pg.page_id GROUP BY vw.page_id ORDER BY views DESC LIMIT 15";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function viewRelatedPage($id) {
+        $sql= "SELECT *, COUNT(vw.page_id) AS views FROM related_pages pg LEFT JOIN views_subpage vw ON vw.page_id=pg.page_id WHERE pg.page_id='$id' ";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function deleteRelatedPage($id) {
+      $sql= "DELETE FROM related_pages WHERE page_id='$id' ";
+      $stmt=$this->con->prepare($sql);
+      $stmt->execute();
+      $count= $stmt->rowCount();
+      return $count; 
+    }
+
+    public function countRelatedPages($id) {
+        $sql= "SELECT COUNT(*) FROM related_pages WHERE page_ref='$id' ";
+        $count= $this->con->query($sql)->fetchColumn();
+        return $count;
+    }
+
+    public function countSingleSpecificRelPage($id) {
+        $sql = "SELECT COUNT(*) FROM related_pages WHERE page_id='$id' ";
+        $count= $this->con->query($sql)->fetchColumn();
+        return $count;
+    }
+
+    // @gadrawingz getting stats to ch page traffikaaa
+    public function getArticleStatsByCountry($lang, $page) {
+        if($lang=='lang_en') {
+            $views_table = "viewsbox";
+            $article_table= "article";
+        } if($lang=='lang_rw') {
+            $views_table = "viewsbox_rw";
+            $article_table= "article_rw";
+        }
+
+        $sql= "SELECT DISTINCT vw.country, vw.city, COUNT(vw.post_id) AS counting FROM $article_table pg LEFT JOIN $views_table vw ON vw.post_id=pg.article_id WHERE vw.post_id='$page' GROUP BY vw.country ORDER BY counting DESC LIMIT 30;";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function getPostStatsByCountry($page) {
+        $sql= "SELECT DISTINCT vw.country, vw.city, COUNT(vw.page_id) AS counting FROM menu_sub_sub pg LEFT JOIN views_pages vw ON vw.page_id=pg.cmenu_id WHERE vw.page_id='$page' GROUP BY vw.country ORDER BY counting DESC LIMIT 30";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function getSubPageStatsByCountry($page) {
+        $sql= "SELECT DISTINCT vw.country, vw.city, COUNT(vw.page_id) AS counting FROM related_pages pg LEFT JOIN views_subpage vw ON vw.page_id=pg.page_id WHERE vw.page_id='$page' GROUP BY vw.country ORDER BY counting DESC LIMIT 30;";
+        $stmt=$this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt;
     }
 
     // End all Queries

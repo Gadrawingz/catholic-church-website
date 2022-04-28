@@ -96,44 +96,50 @@ if(isset($_GET['return_page']) && isset($_GET['lang']) && $_GET['lang']!=''){
         } ?><?php echo $aboutrow['site_name']; ?>
             
     </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="" />
     <meta name="author" content="" />
     <!-- css -->
 	 <link rel="shortcut icon" href="./images/profile/logo_black.gif">
     <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/fancybox/jquery.fancybox.css" rel="stylesheet">
-    <link href="css/jcarousel.css" rel="stylesheet" />
-    <link href="css/flexslider.css" rel="stylesheet" />
     <!-- Vendor Styles -->
     <link href="css/magnific-popup.css" rel="stylesheet">
-    <link href="js/owl-carousel/owl.carousel.css" rel="stylesheet">
+  
     <link href="css/gallery-1.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" />
-    <link href="css/defined.css" rel="stylesheet" />
-    <link href="others/carousel/slideshow.css" rel="stylesheet" />
+    <link href="css/defined.css" rel="stylesheet" />  
+		
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.3.1/css/flag-icon.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="engine1/style.css" />
+	<script type="text/javascript" src="engine1/jquery.js"></script>
+	     
+  
 </head>
-<body style="overflow-x: hidden!important;">
+<body  style="overflow-x: hidden!important;background:#dde">
 
-<div id="wrapper">
-<div class="topbar call-to-action-2" style="background:#fff;">
-  <div class="container">
+<div class="wrapper">
+<div class="container">
+<!--<div class="topbar call-to-action-1" style="background-color:red"> -->
+<section class="section-padding red-bg">	
     <div class="row">
-     <div class="col-md-8">	
-        <img src="./images/profile/logo_og.png" style="width: 25%; height:auto;">
+     <div class="col-md-9">	
+       <p style="width: 90%; height:auto;margin-bottom:-40px;">
+	    <img src="./images/profile/logocover.png" style="width: 90%; height:auto;margin-bottom:0px;">
+	   </p>    
       </div>
-	  <div class="col-md-4 text-right">
-        <p style="color:black"> <span class="flag-icon flag-icon-us"></span><a href="?lang=en"> English</a>&nbsp;|&nbsp;<span class="flag-icon flag-icon-rw"></span> <a href="?lang=rw">Kinyarwanda</a></p>
+	  <div class="col-md-3 text-center">     		
+       <span class="flag-icon flag-icon-us"></span>
+		<a href="?lang=en"> English</a>&nbsp;|&nbsp;<span class="flag-icon flag-icon-rw"></span> 
+		<a href="?lang=rw">Kinyarwanda</a>	
       </div>
-    </div>
-  </div>
-</div>
-
-    <div id="wrapper" class="home-page">
+	</div>
+ </section>
+  <hr style="margin-bottom:-20px;background-color:#df100d">
+ 
+<div id="wrapper" class="home-page">
         <!-- start header -->
-        <header>
-            <div class="navbar navbar-default navbar-static-top">
+<header>	
+            <div class="navbar navbar-default navbar-static1-top">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -141,12 +147,14 @@ if(isset($_GET['return_page']) && isset($_GET['lang']) && $_GET['lang']!=''){
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand iradu-nav" href="./" style="color: #fadbd8!important;"><?php echo $aboutrow['site_name']; ?></a>
+<p style="color:#ffffff;font-size:2rem;letter-spacing:6px;text-shadow:1px 1px 2px #000;word-spacing:2px;">
+                        <a class="navbar-brand iradu-nav" href="./" style="color: #fadbd8!important;">
+						<?php echo $aboutrow['site_name']; ?>
+						</a>
+</p>
                     </div>
-                    <div class="navbar-collapse collapse ">
+                    <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                         
-
                         <?php
                         $stmt2= $object->topMenus();
                         
@@ -189,7 +197,7 @@ if(isset($_GET['return_page']) && isset($_GET['lang']) && $_GET['lang']!=''){
                                                 if($csmenu['link_order']=='Original') {
                                                     echo '<a href="page/'.$csmenu['cmenu_url'].'">';
                                                 } else {
-                                                    echo '<a href="'.$csmenu['featured_link'].'">';
+                                                    echo '<a href="'.$csmenu['featured_link'].'" target="_blank">';
                                                 }
                                                 
                                                 if($active_lang=='lang_en') {
@@ -238,6 +246,7 @@ if(isset($_GET['return_page']) && isset($_GET['lang']) && $_GET['lang']!=''){
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div>		
         </header>
+	
         <!-- end header -->
