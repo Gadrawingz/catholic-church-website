@@ -1,47 +1,52 @@
-<?php include('configs/site_header.php');?>
-        
-        <section class="shit-container">
-            <!-- Full-width images with number and caption text -->
-            <?php
-            $numSlide = 1;
-            $stmt= $object->viewAllSlides();
-            while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
-            ?>
-
-            <div class="iSlides fading" style="max-height: 100%!important;">
-                <div class="numbertexto"><?php echo $numSlide;?> / 4</div>
-                <img src="uploads/slides/<?php echo $row['slide_image']; ?>" alt="<?php echo $row['slide_title']; ?>" style="width:100%">
-                <div class="slide-text"><b><?php echo $row['slide_title']; ?></b><br>
-                    <span style="color: white; font-size: 12.5px; font-style: normal;"><?php echo $row['description']; ?></span>
-                </div>
-            </div>
-            <?php $numSlide++; } ?>        
-
-            <!-- Next and previous buttons -->
-            <a class="prevShit" onclick="plusSlides(-1)">&#10094;</a>
-            <a class="nextShit" onclick="plusSlides(1)">&#10095;</a>
-        </section>
-        <br>
-    
-        <!-- The dots/circles -->
-        <div style="text-align:center">
-            <?php
-            $numShit = 1;
-            $stmt4= $object->viewAllSlides();
-            while($row4= $stmt4->FETCH(PDO::FETCH_ASSOC)) {
-            ?>
-            <span class="bdot" onclick="currentSlide($numShit)"></span>
-            <?php $numShit++; } ?>
-        </div><br>
-        <section id="call-to-action-2">
-            <div class="container">
+<?php include('configs/site_header.php');?> 
+		   
+		<!--====================================    new slide here================================-->
+	<div id="wowslider-container1"> 
+	<div class="ws_images">	
+	<ul>
+		  <?php
+	
+	$stmt= $object->viewAllSlides();
+	for($i=0;$row=$stmt->FETCH(PDO::FETCH_ASSOC);$i++) {
+	?>
+		<li>
+		<a href="#"><img src="uploads/slides/<?php echo $row['slide_image_max']; ?>" alt="slide-after first vows" title="<?php echo $row['slide_title'];?>" id="wows1_<?php echo $i;?>"/></a></li>
+	    
+	<?php
+	
+	}?>
+	</ul>
+	</div>
+		<div class="ws_bullets">
+				  <?php
+	
+	$stmt= $object->viewAllSlides();
+	for($i=0;$row=$stmt->FETCH(PDO::FETCH_ASSOC);$i++) {
+	?>
+		<div>
+		<a href="#" title="<?php echo $row['slide_title'];?>"><span><img src="uploads/slides/<?php echo $row['slide_image_min']; ?>" alt="<?php echo $row['slide_title'];?>"/><?php echo $i;?></span></a>
+		
+	     </div>
+		 	<?php
+	
+	}?>
+	</div>
+	<div class="ws_script" style="position:absolute;left:-99%"><a href="#">image slider</a></div>
+	<div class="ws_shadow"></div>	
+	</div>	
+		<!--======================  New slide Here ============================-->	
+		<!--======================  Quote of the day ==========================-->	
+	 <hr style="margin-bottom:-20px;background-color:#df100d">
+        <section class="section-padding gray-bg">
+            <div>
                 <div class="row">
                     <div class="col-md-10 col-sm-9">
-                        <?php
+                       <h2> <?php
                         $stmt_version= $object->viewLangVersionText('daily_quote');
                         $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                         echo $row_lang[$func->getLangRow($active_lang)];
                         ?>
+						</h2>
                         <p style="color: aliceblue!important;">&laquo;
                             <?php
                             if($active_lang=='lang_en') {
@@ -50,34 +55,38 @@
                                 echo $aboutrow['main_quote_rw'];
                             }
                             ?> &raquo;
+
                         </p>
                     </div>
-                    <div class="col-md-2 col-sm-3">
-                        <?php
+                    <div class="col-md-2 col-sm-3">  
+                      <br><br><br>
+                           <?php
                         // Get specific menu data
-                        $stmt88= $object->getSpecificPageBySlug('prayers');
+                        $stmt88= $object->getSpecificPageBySlug('prayer');
                         $Mmenu= $stmt88->FETCH(PDO::FETCH_ASSOC);
-                        if($Mmenu['link_order']=='Original') {
-                            echo '<a href="page/prayers" class="btn btn-primary">';
+                        if(@$Mmenu['link_order']=='Original') {
+                            echo '<a href="page/prayer" class="btn btn-primary">';
                         } else {
-                            echo '<a href="'.$Mmenu['featured_link'].'" class="btn btn-primary">';
+                            echo '<a href="'.@$Mmenu['featured_link'].'" class="btn btn-primary" target="_blank">';
                         }
 
-                        $stmt_version= $object->viewLangVersionText('prayers');
+                        $stmt_version= $object->viewLangVersionText('prayer');
                         $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
-                        echo $row_lang[$func->getLangRow($active_lang)];
+                        echo @$row_lang[$func->getLangRow($active_lang)];
                         ?>
                         </a>
                     </div>
                 </div>
             </div>
         </section>
-
-        <section id="content">
-        <div class="container content">     
-
+		 <hr style="margin-bottom:-20px">
+	<!--====================================    end Quote of the day================================-->
+	
+	<!--====================================   recent post===========================================-->
+        <section class="section-padding gray-bg">
+        <div>    
         <!-- End Info Bocks -->
-        <h2 class="aligncenter">
+        <h2 class="text-center">
             <?php
             $stmt_version= $object->viewLangVersionText('recent_posts');
             $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
@@ -98,7 +107,7 @@
                         <a href="read/<?php echo $rowp['article_id'];?>" class="gallery-link"><i class="fa fa-link"></i></a>
                     </div>
                     <div>
-                        <h3><a href="read/<?php echo $rowp['article_id'];?>"><?php echo $rowp['article_title'];?></a></h3>
+                        <h3><a href="read/<?php echo $rowp['article_id'];?>"><?php echo ucwords(strtolower($rowp['article_title']));?></a></h3>
                         <p><?php echo $object->showShortArticle(strip_tags($rowp['article_post']));?></p>
                     </div>
                 </div>
@@ -109,10 +118,13 @@
         <!-- End Service Blcoks -->
     </div>
     </section>
+ <hr style="margin-bottom:-20px;background-color:#df100d">
 
 
-        <section id="content">
-            <div class="container">
+<!--==================================== end  recent post======================================-->
+<!--==================================== Who we are=============================================-->
+        <section class="section-padding gray-bg">
+            <div class="">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="aligncenter">
@@ -137,8 +149,11 @@
             </div>
         </section>
 
+<!--==================================== end of Who we are======================================-->
+<!--==================================== Contact us======================================-->
+ <hr style="margin-bottom:-20px;background-color:#df100d">
         <section class="section-padding gray-bg">
-            <div class="container">
+            <div class="">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-title text-center">
@@ -224,22 +239,25 @@
                         </form>
                     </div>
 
-                    <div class="col-md-6 col-sm-6">
-                        <div class="about-text">
-                            <h4 style="color: #FFF;">
+                    <div class="col-md-6 col-sm-6">                       
+						<div class="about-text">
+						
+                            <h4 style="color: #fff;">
                             <?php
                             $stmt_version= $object->viewLangVersionText('write_for_us');
                             $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                             echo $row_lang[$func->getLangRow($active_lang)];
                             ?>
                             </h4><hr>
-                            <p>
+                            <div class="container">
+							<p style="margin-right:700px">
                             <?php
                             $stmt_version= $object->viewLangVersionText('contact_us_text');
                             $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                             echo $row_lang[$func->getLangRow($active_lang)];
-                            ?>                        
-                            </p><hr>
+                            ?>
+							</p>
+                            </div><hr>
                             <h4 style="color: cadetblue;">
                             <?php
                             $stmt_version= $object->viewLangVersionText('contact_us');
@@ -271,17 +289,19 @@
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
                             </a>
+                        
+                        
                         </div>
                     </div>
                 </div>
             </div>
-        </section><br>
+        </section>
+ <hr style="margin-bottom:-20px;background-color:#df100d">
 
-
-
-
+<!--==================================== end of  Contact us======================================-->
+<!--==================================== Encouragement============================================-->
         <section class="section-padding gray-bg">
-            <div class="container">
+            <div>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-title text-center">
@@ -334,7 +354,7 @@
                                     echo $row_lang[$func->getLangRow($active_lang)];
                                 ?></li>
                             </ul>
-                            <a href="page/who-are-we" class="btn btn-primary">
+                            <a href="page/god-is-calling-you" class="btn btn-primary">
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('more_info');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
@@ -352,23 +372,26 @@
             </div>
         </section>
 
-
-
-        <div class="about home-about">
-            <div class="container">
+<!--==================================== Encouragement============================================-->
+<!--==================================== mission============================================-->
+ <hr style="margin-bottom:-20px;background-color:#df100d">
+		<section class="section-padding gray-bg">
+			<div>       
                 <div class="row">
                     <div class="col-md-6">
+					 <div class="about-text">
                         <!-- Heading and para -->
-                        <div class="block-heading-two">
-                            <h3><span class="fa fa-bookmark"></span> 
+                        <p>
+                            <h2 class="text-center"><span class="fa fa-bookmark"></span> 
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('mission');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
-                            </h3>
-
-                        </div>
+                            </h2>
+							
+						<hr>
+                        </p>
                         <p style="text-transform: capitalize!important;">
                             <?php
                             if($active_lang=='lang_en') {
@@ -379,16 +402,18 @@
                             ?>
                         </p>
                     </div>
+                    </div>
 
                     <div class="col-md-6">
-                        <div class="timetable">
-                            <h3><span class="fa fa-clock-o"></span> 
+					 <div class="about-text">
+                        <p>
+                            <h2 class="text-center"><span class="fa fa-clock-o"></span> 
                                 <?php
                                 $stmt_version= $object->viewLangVersionText('more');
                                 $row_lang= $stmt_version->FETCH(PDO::FETCH_ASSOC);
                                 echo $row_lang[$func->getLangRow($active_lang)];
                                 ?>
-                            </h3>
+                            </h2>
                             <hr>
                             <dl>
                                 <dt>
@@ -414,10 +439,11 @@
                         </div>
                     </div>
                 </div>
+                </div>
                 <br>
-            </div>
-
-        </div>
-
+             </div>
+  </section>
+ <hr style="margin-bottom:-20px;background-color:#df100d">
+<!--==================================== mission============================================-->
         <!-- Main footer -->
         <?php include('configs/site_footer.php'); ?>
