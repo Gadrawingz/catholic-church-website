@@ -221,6 +221,35 @@
 	border-bottom: none;
 }
 
+
+/* Pagination */
+.ct-pagin {
+	padding: 0;
+	list-style: none;
+	margin: 0;
+	background: #1f618d;
+	display: flex;
+	flex-flow: column wrap;
+	justify-content: center;
+}
+
+.ct-pagin a {
+	text-align: center;
+	padding: 4px;
+	border-top: 1px solid rgba(255, 255, 255, 0.3);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	text-decoration: none;
+	display: block;
+	color: white;
+	background-color: #4a235a;
+	margin: 5px;
+}
+
+.ct-pagin a:hover {
+	background: #1a5276;
+}
+
+
 /* main layout */
 .ct-wrapper {
 	display: -webkit-box;
@@ -303,10 +332,43 @@
 }
 
 
+.ct-aside .fine-ul {
+	display: inline-block!important;
+	margin-left: 0!important;
+	padding-left: 0!important;
+	width: 100%!important;
+}
+
+.ct-aside .fine-ul .fine-li {
+	background: #154360!important;
+	list-style: none;
+	padding: 8px 2px!important;
+	text-align: left!important;
+	margin-bottom: 0!important;
+	padding-left: 0px!important;
+	border-bottom: 1px solid #626567!important;
+}
+
+
+.search-sect {
+  font-size: 15px;
+}
+.search-sect input[type="text"], input[type="submit"] {
+  padding:2px;
+  margin: 2px;
+  outline: none;
+  border: 1px solid #21618c;
+  border-radius: 3px!important;
+}
+
+.search-sect input[type="submit"] {
+  background: #21618c;
+  color: #FFF;
+}
 
 /* medium sized screens */
 @media all and (min-width: 600px) {
-	.ct-nav {
+	.ct-nav, .ct-pagin {
 		flex-flow: row wrap;
 	}
   
@@ -335,10 +397,42 @@
 		margin-right: 3px;
 	}
 
-
 	.ct-nav { justify-content: space-between; }
   .ct-main { flex: 3 0px; }
   .ct-aside { order: 2; }
   .ct-main { order: 1; }
-  }
 }
+
+
+/*************** GRID THANG ****************/
+.post-wrapper {
+  display: flex!important;
+  flex-flow: row wrap!important;
+}
+
+.post-title {
+	color: brown;
+}
+
+.post-column {
+	align-items: flex-start;
+	justify-content: center!important;
+	align-items: center!important;
+	flex-flow: column wrap!important;
+  margin: 5px;
+  width: 30%!important;
+}
+
+/* medium sized screens */
+
+@media all and (max-width: 900px) {
+	.post-column { width: 100%!important; }
+}
+
+/*
+@media (max-width: 979px) ???  (min-width: 768px) {
+	.post-column { 
+		width: 40%!important; 
+		justify-content: space-around;
+	}
+}*/
