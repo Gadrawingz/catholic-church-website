@@ -166,30 +166,18 @@ class AdminQuery extends DbConnection {
         return $count;
     }
 
-
-    public function readArticlesByPublisher($id) {
-        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE publisher_id='$id' ORDER BY article_id DESC LIMIT 25 ");
+    public function readArticlesByPublisher($id, $start, $lim) {
+        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE publisher_id='$id' ORDER BY article_id DESC LIMIT $start, $lim");
         $stmt->execute();
         return $stmt;
     }
 
-    public function readArticlesByPublisherRw($id) {
-        $stmt=$this->con->prepare("SELECT * FROM article_rw art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE publisher_id='$id' ORDER BY article_id DESC LIMIT 25 ");
+    public function readArticlesAll($start, $lim) {
+        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id ORDER BY article_id DESC LIMIT $start, $lim");
         $stmt->execute();
         return $stmt;
     }
 
-    public function readArticlesAll() {
-        $stmt=$this->con->prepare("SELECT * FROM article art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id ORDER BY article_id DESC LIMIT 35 ");
-        $stmt->execute();
-        return $stmt;
-    }
-
-    public function readArticlesAllRw() {
-        $stmt=$this->con->prepare("SELECT * FROM article_rw art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id ORDER BY article_id DESC LIMIT 35 ");
-        $stmt->execute();
-        return $stmt;
-    }
 
     public function readArticle($article_id) {
         $stmt=$this->con->prepare("SELECT * FROM `article`art LEFT JOIN admin adm ON adm.admin_id = art.publisher_id WHERE article_id='$article_id' ");
@@ -261,6 +249,49 @@ class AdminQuery extends DbConnection {
         $stmt=$this->con->prepare("SELECT * FROM $table ORDER BY article_date DESC LIMIT 3");
         $stmt->execute();
         return $stmt;
+    }
+
+
+    public function readMinimumArticles($lang, $start, $lim) {
+        if($lang=='lang_en') {
+            $table = "article";
+        } if($lang=='lang_rw') {
+            $table = "article_rw";
+        }
+        $stmt=$this->con->prepare("SELECT * FROM $table ORDER BY article_date DESC LIMIT $start, $lim");
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function readArticlesBySearch($lang, $keyword) {
+        if($lang=='lang_en') {
+            $table = "article";
+        } if($lang=='lang_rw') {
+            $table = "article_rw";
+        }
+        $stmt=$this->con->prepare("SELECT * FROM $table art LEFT JOIN admin adm ON adm.admin_id= art.publisher_id WHERE art.article_title LIKE '%$keyword%' ORDER BY article_date DESC LIMIT 18");
+
+
+
+        $stmt->execute();
+        return $stmt;
+    }
+
+
+    public function articlesPagination($lang) {
+        if($lang=='lang_en') {
+            return $this->con->query("SELECT count(*) FROM article")->fetchColumn();
+        } else if($lang=='lang_rw') {
+            return $this->con->query("SELECT count(*) FROM article_rw")->fetchColumn();
+        }
+    }
+
+    public function articlesPaginByPublisher($lang, $id) {
+        if($lang=='lang_en') {
+            return $this->con->query("SELECT count(*) FROM article WHERE publisher_id='$id'")->fetchColumn();
+        } else if($lang=='lang_rw') {
+            return $this->con->query("SELECT count(*) FROM article_rw WHERE publisher_id='$id'")->fetchColumn();
+        }
     }
 
     public function readPopularArticles($lang) {
@@ -1108,8 +1139,8 @@ class AdminQuery extends DbConnection {
         return $stmt;
     }
 
-    public function view8TopRelatedPages($id) {
-        $stmt=$this->con->prepare("SELECT * FROM related_pages WHERE page_ref='$id' ORDER BY created_at DESC LIMIT 8 ");
+    public function view6TopRelatedPages($id) {
+        $stmt=$this->con->prepare("SELECT * FROM related_pages WHERE page_ref='$id' ORDER BY created_at DESC LIMIT 6 ");
         $stmt->execute();
         return $stmt;
     }

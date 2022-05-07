@@ -17,7 +17,8 @@ $stmt500= $object->getSpecificPageBySlug($menu_slug);
 $result = $stmt500->FETCH(PDO::FETCH_ASSOC);
 }
 
-if(isset($_GET['article_id'])) {
+
+if(isset($_GET['article_id']) && !empty($_GET['article_id'])) {
 // Getting special url
 $articleid = $_REQUEST['article_id'];
 
@@ -26,9 +27,16 @@ if($_SESSION['active_lang']=='lang_en') {
 } if($_SESSION['active_lang']=='lang_rw') {
     $stmt600= $object->readArticleRw($articleid);
 }
-
 $articla= $stmt600->FETCH(PDO::FETCH_ASSOC);
 }
+
+
+if(isset($_GET['subpage_id']) && !empty($_GET['subpage_id'])) {
+$subpage_id = $_GET['subpage_id'];
+$stmt740= $object->viewRelatedPage($subpage_id);
+$sub_page_row= $stmt740->FETCH(PDO::FETCH_ASSOC);
+}
+
 
 // TRANSLATE SHIT
 if(!isset($_SESSION['active_lang'])) {
@@ -72,6 +80,9 @@ if(isset($_GET['lang']) && $_GET['lang']=='en') {
             }
         } else if(isset($articleid) && $articleid!='0' && $object->check4ArticleExistance($active_lang, $articleid)!=0) {
             echo $articla['article_title']." - ";
+
+        } else if(isset($subpage_id) && $subpage_id!='0' && $object->countSingleSpecificRelPage($subpage_id)!=0) {
+            echo $sub_page_row['content_title_en']." - ";
         } else {
             echo "Error - ";
         }?><?php echo $aboutrow['site_name']; ?>
