@@ -16,6 +16,7 @@
                   <?php } ?>
                 </div>
 
+            
 
 
                 <div>
@@ -99,12 +100,20 @@
 
 
           <div class="row">
-            <?php 
-            if(isset($_GET['all'])) { 
-              $stmt= $object->readArticlesAll();
-              while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
-                $post_views = $object->countArticleViews($_SESSION['active_lang'], $row['article_id']);
-            ?>
+          <?php 
+          if(isset($_GET['all']) && (isset($_GET['page']) || !empty($_GET['page']))){
+            $lim = 15;
+            $page = '';
+            if(isset($_GET["page"])) {
+              $page= $_GET["page"];
+            } else { 
+              $page = 1;
+            } 
+            $start= ($page-1) * $lim;
+            $stmt= $object->readArticlesAll($start, $lim);
+            while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
+              $post_views = $object->countArticleViews('lang_en', $row['article_id']);
+          ?>
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -135,7 +144,7 @@
                     <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
                   </p>
                   <p>
-                    <hr><small>Created: <strong><?php echo $row['article_date']; ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>&nbsp;•&nbsp;
+                    <hr><small>Created: <strong><?php echo $func->gadsonDateTimeFormatter($row['article_date']); ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>&nbsp;•&nbsp;
                     <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-primary text-right" style="padding: 2.5px 5px!important;">Edit</a>
                     &bull;
                     <a href="../admin/articles?rema=<?php echo $row['article_id']; ?>" onclick="return confirm('If you click press \'OK\' Both English and Kinyarwanda will be removed, You cannot restore data!')" class="btn btn-sm btn-danger text-right" style="padding: 2.5px 5px!important;">Delete</a>
@@ -143,14 +152,54 @@
                 </div>
               </div>
             </div>
-            <?php }} ?>
+            <?php } ?>
+            <div class="col-md-12">
+              <div class="template-demo">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <?php
+                  $t_recs = $object->articlesPagination('lang_en');
+                  $t_pages = ceil($t_recs / $lim); 
+                  $start_lp = $page;
+                  $diff = $t_pages - $page;
+                  if($diff <= 15) {
+                    $start_lp = $t_pages - 15;
+                  }
+                  $end_lp = $start_lp + 14;
+                  if($page > 1) {
+                  ?>
+                  <a href="../admin/articles?all&page=<?php echo $page-1; ?>" class="btn btn-primary">
+                    <i class="ti ti-angle-double-left"></i>
+                  </a>
+                  <?php } if($diff = $page) { ?>
+                  <a href="../admin/articles?all&page=<?php echo $page; ?>" class="btn btn-warning">
+                    <?php echo $page; ?>
+                  </a>
+                  <?php } if($page<=$end_lp) { ?>
+                  <a href="../admin/articles?all&page=<?php echo $page+1; ?>" class="btn btn-primary">
+                    <i class="ti ti-angle-double-right"></i>
+                  </a>
+                  <?php } ?>
+                </div>
+              </div>
+            </div>
+            <?php } ?>
+
+
+
 
             <?php
-            if(isset($_GET['view'])) { 
-            $num = 1;
-            $stmt= $object->readArticlesByPublisher($admin_id);
+            if(isset($_GET['view']) && (isset($_GET['page']) || !empty($_GET['page']))){
+            $lim = 15;
+            $page = '';
+            if(isset($_GET["page"])) {
+              $page= $_GET["page"];
+            } else { 
+              $page = 1;
+            } 
+            $start= ($page-1) * $lim;
+            $stmt= $object->readArticlesByPublisher($admin_id, $start, $lim);
             while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
-            $post_views = $object->countArticleViews($_SESSION['active_lang'], $row['article_id']);
+            $post_views = $object->countArticleViews('lang_en', $row['article_id']);
             ?>
             <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
@@ -179,7 +228,7 @@
                     <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
                   </p>
                   <p>
-                    <hr><small>Created: <strong><?php echo $row['article_date']; ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>&nbsp;•&nbsp;
+                    <hr><small>Created: <strong><?php echo $func->gadsonDateTimeFormatter($row['article_date']); ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>&nbsp;•&nbsp;
                     <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-primary text-right" style="padding: 2.5px 5px!important;">Edit</a>
                     &bull;
                     <a href="../admin/articles?rema=<?php echo $row['article_id']; ?>" onclick="return confirm('If you click press \'OK\' Both English and Kinyarwanda will be removed, You cannot restore data!')" class="btn btn-sm btn-danger text-right" style="padding: 2.5px 5px!important;">Delete</a>
@@ -187,7 +236,95 @@
                 </div>
               </div>
             </div>
+            <?php } ?>
+            <div class="col-md-12">
+              <div class="template-demo">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <?php
+                  $t_recs = $object->articlesPaginByPublisher('lang_en', $admin_id);
+                  $t_pages = ceil($t_recs / $lim); 
+                  $start_lp = $page;
+                  $diff = $t_pages - $page;
+                  if($diff <= 15) {
+                    $start_lp = $t_pages - 15;
+                  }
+                  $end_lp = $start_lp + 14;
+                  if($page > 1) {
+                  ?>
+                  <a href="../admin/articles?view&page=<?php echo $page-1; ?>" class="btn btn-primary">
+                    <i class="ti ti-angle-double-left"></i>
+                  </a>
+                  <?php } if($diff = $page) { ?>
+                  <a href="../admin/articles?view&page=<?php echo $page; ?>" class="btn btn-warning">
+                    <?php echo $page; ?>
+                  </a>
+                  <?php } if($page<=$end_lp) { ?>
+                  <a href="../admin/articles?view&page=<?php echo $page+1; ?>" class="btn btn-primary">
+                    <i class="ti ti-angle-double-right"></i>
+                  </a>
+                  <?php } ?>
+                </div>
+              </div>
+            </div>
+            <?php } ?>
+
+
+
+
+
+
+            <div class="col-md-12">
+              <h4><u><center>Result found on while Searching...</center></u></h4>   
+            </div>
+            <?php
+            if(isset($_GET['s_keyword']) && !empty($_GET['s_keyword'])) {
+              $stmt= $object->readArticlesBySearch('lang_en', $_GET['s_keyword']);
+              while($row= $stmt->FETCH(PDO::FETCH_ASSOC)) {
+                $post_views = $object->countArticleViews('lang_en', $row['article_id']);
+            ?>
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <a href="../admin/articles?update=<?php echo $row['article_id']; ?>">
+                    <h3 class="card-title text-primary"><?php echo $row['article_title']; ?></h3>
+                  </a>
+                  <p class="card-description">
+                    By <?php echo $row['firstname']." ".$row['lastname']; ?> 
+                    •<mark class="text-primary" >
+                      <?php if($post_views=='0') echo "No view"; ?>
+                      <?php if($post_views=='1') echo $post_views." view"; ?>
+                      <?php if($post_views>1) echo "<strong>".$post_views."</strong> views"; ?>
+                    </mark>&nbsp;•&nbsp;
+
+                    <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-success text-right" style="padding: 2.5px 5px!important;">Preview</a>
+                  
+                    <?php if($object->check4TranslatedPost($row['article_id'])==1) { ?>
+                      <a href="articles?update_rw=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-secondary text-right text-white" style="padding:2.5px 5px!important;">VIEW:RW</a>
+                    <?php } else { ?>
+                      <a href="articles?create&post_rw&p_fixed=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-primary text-right text-white" style="padding:2.5px 5px!important;">Translate</a>
+                    <?php } ?>
+
+                  </p>
+                  <p>
+                    <?php echo $object->showMediumText(strip_tags($row['article_post'])); ?>
+                  </p>
+                  <p>
+                    <hr><small>Created: <strong><?php echo $func->gadsonDateTimeFormatter($row['article_date']); ?></strong>&nbsp;in&nbsp;&raquo;&nbsp;<?php echo $row['article_category']; ?></small>&nbsp;•&nbsp;
+                    <a href="../admin/articles?update=<?php echo $row['article_id']; ?>" class="btn btn-sm btn-primary text-right" style="padding: 2.5px 5px!important;">Edit</a>
+                    &bull;
+                    <a href="../admin/articles?rema=<?php echo $row['article_id']; ?>" onclick="return confirm('If you click press \'OK\' Both english and Kinyarwanda will be removed, You cannot restore data!')" class="btn btn-sm btn-danger text-right" style="padding: 2.5px 5px!important;">Delete</a>
+                  </p>
+                </div>
+              </div>
+            </div>
             <?php }} ?>
+
+
+
+
+
+
+
 
 
             <div class="col-md-12 grid-margin stretch-card">    
@@ -309,7 +446,7 @@
               }
               ?>
 
-              <?php if(isset($_GET['update'])) {
+              <?php if(isset($_GET['update']) && !empty($_GET['update'])) {
                 $stmt= $object->readOneArticle($_GET['update'], $admin_id);
                 $uresult= $stmt->FETCH(PDO::FETCH_ASSOC);
 
@@ -352,7 +489,7 @@
               <?php } ?>
 
 
-              <?php if(isset($_GET['update_rw'])) {
+              <?php if(isset($_GET['update_rw']) && !empty($_GET['update_rw'])) {
                 $stmt= $object->readOneArticleRwByRef($_GET['update_rw'], $admin_id);
                 $uresult= $stmt->FETCH(PDO::FETCH_ASSOC);
 
@@ -367,7 +504,11 @@
               ?>
               <div class="card">
                 <div class="card-body">
-                  <h4>View & Update this article</h4><hr>
+                  <h4>View & Update this article</h4>
+                  <span class="text-primary font-weight-bold"><?php
+                  echo $object->countArticleViews('lang_rw', $_GET['update_rw'])." view(s).";
+                  ?></span>
+                  <hr>
                   <form class="forms-sample" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                       <label for="article_title">Article title</label>

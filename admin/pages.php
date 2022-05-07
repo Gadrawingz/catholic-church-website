@@ -119,6 +119,8 @@
                                         <i class="ti-eye"></i></a>&nbsp;&nbsp;
                                         <a href="articles?view" class="text-dark"><?php echo $csmenu['cmenu_name']; ?></a>
                                       <?php } else { ?>
+                                        <a class="btn btn-sm btn-secondary" title="Add related page" href="pages_more?p_related=<?php echo $csmenu['cmenu_id']; ?>"><i class="ti-folder"></i>
+                                        </a>
                                         <a href="?rempage=<?php echo $csmenu['cmenu_id']; ?>" class="btn btn-sm btn-danger"
                                         style="
                                         margin: 6px 0 6px 0!important; 
@@ -488,6 +490,7 @@
                     if($tabCheck==0 || $tabCheck<5){ 
                       if(!isset($_GET['newtab'])) { ?>
                         <a href="?preview=<?php echo $_GET['preview'] ?>&newtab" class="btn btn-sm btn-primary">Add new tab</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <a class="btn-sm btn-success" href="pages_more?p_related=<?php echo $_GET['preview']; ?>">Add Related Page</a>&nbsp;&nbsp;|&nbsp;&nbsp;
 
                         <?php if(!isset($_GET['tb_lang']) || ($_GET['tb_lang']!='tb_rw')) { ?>
                         <a href="?preview=<?php echo $_GET['preview'] ?>&tb_lang=tb_rw" class="btn btn-sm btn-warning font-weight-bold text-white">Tabs in Kinyarwanda</a><br>
@@ -530,6 +533,8 @@
 
                     // Show default tab(english) only if tab in french, kinyarwanda is not set
                     if(!isset($_GET['tb_lang']) || isset($_GET['tb_lang']) && ($_GET['tb_lang']=='tb_en' && $_GET['tb_lang']!='tb_rw' && $_GET['tb_lang']!='tb_fr')) {
+                      // If its about creating new tab, Don't show preview
+                      if(!isset($_GET['newtab'])) {
 
                     while($tabbedrow= $stmt73->FETCH(PDO::FETCH_ASSOC)) {
 
@@ -555,7 +560,9 @@
                       </div>
                       <button type="submit" class="btn btn-sm btn-success mr-2" name="tabupdate">Save changes</button>
                     </form>
-                    <?php }} // Closing preview tab in english
+                    <?php }
+                      } /* Don't show this on new tab */ 
+                    } /* Closing preview tab in english */
 
 
                     // PREVIEW TAB WHICH IS IN KINYARWANDA
