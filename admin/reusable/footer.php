@@ -35,6 +35,7 @@
     // Load summernote
     $("#textContent").summernote();
     $(".tabContent").summernote();
+    $("#mission_rw").summernote();
     // document.getElementById('textContent').style.height='500px';
   </script>
 

@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-
 if(!isset($_SESSION['admin_id'])) {
     echo "<script>window.location='../admin/login'</script>"; 
 }
@@ -13,6 +12,9 @@ if(isset($_GET['logout'])) {
 
 include('../configs/adminquery.php');
 $object = new AdminQuery;
+
+include('../configs/functions.php');
+$func = new Functions;
 
 $admin_id = $_SESSION['admin_id']; 
 $names = $_SESSION['admin_names'];
@@ -62,14 +64,20 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
         </button>
         <ul class="navbar-nav mr-lg-2">
           <li class="nav-item nav-search d-none d-lg-block">
+            <?php
+            if(isset($_POST['search_btn'])) {
+              echo "<script>window.location='../admin/articles?s_keyword=".$_POST['search_kwd']."'</script>";
+            }?>
+            <form method="POST">
             <div class="input-group">
+              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search news in English" aria-label="search" name="search_kwd" aria-describedby="search">
               <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                <span class="input-group-text" id="search">
+                <button type="submit" class="input-group-text" id="search" name="search_btn">
                   <i class="ti-search"></i>
-                </span>
+                </button>
               </div>
-              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search news" aria-label="search" aria-describedby="search">
             </div>
+            </form>
           </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
@@ -120,14 +128,14 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
 
           <?php if($_SESSION['admin_role']=='Admin') { ?>
           <li class="nav-item">
-            <a class="nav-link" href="../admin/manage?view">
+            <a class="nav-link" href="../admin/manage?view&page=1">
               <i class="ti-user menu-icon"></i>
               <span class="menu-title">Admins & Authors</span>
             </a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="../admin/articles?all">
+            <a class="nav-link" href="../admin/articles?all&page=1">
               <i class="ti-book menu-icon"></i>
               <span class="menu-title" title="Manage posts(articles)">Manage News&nbsp;<mark><?php echo $total_articles; ?></mark>
             </a>
@@ -144,7 +152,7 @@ $total_articles_author = $object->countArticleForAuthor($admin_id);
           <?php } ?>
 
           <li class="nav-item">
-            <a class="nav-link" href="../admin/articles?view">
+            <a class="nav-link" href="../admin/articles?view&page=1">
               <i class="ti-world menu-icon"></i>
               <span class="menu-title" title="Manage posts(articles)">Manage News&nbsp;<mark><?php echo $total_articles_author; ?></mark></span>
             </a>
